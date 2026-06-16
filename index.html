@@ -1,1015 +1,567 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Site Yönetim Paneli</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-:root{--primary:#1a3a5c;--primary-light:#2a5f8f;--accent:#e8b84b;--bg:#f0f4f8;--surface:#ffffff;--surface2:#f7f9fc;--border:#dde3ec;--text:#1a2332;--text2:#5a6a7e;--text3:#8a98a8;--success:#1a7f5a;--success-bg:#e8f7f1;--danger:#c0392b;--danger-bg:#fdf0ef;--warning:#b5780a;--warning-bg:#fef8e8;--info:#1a5a9f;--info-bg:#e8f0fb;--radius:12px;--radius-sm:8px;--shadow:0 2px 12px rgba(26,58,92,0.08);--shadow-lg:0 8px 32px rgba(26,58,92,0.14)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);padding:20px}
-.login-card{background:var(--surface);border-radius:20px;padding:40px 32px;width:100%;max-width:380px;box-shadow:var(--shadow-lg)}
-.login-logo{text-align:center;margin-bottom:28px}
-.login-icon{width:64px;height:64px;background:var(--primary);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.login-icon svg{width:32px;height:32px;fill:none;stroke:white;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.login-title{font-size:20px;font-weight:700;color:var(--primary)}
-.login-sub{font-size:13px;color:var(--text2);margin-top:4px}
-.fg{margin-bottom:16px}
-.fg label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.fg input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);outline:none;background:var(--surface2);transition:border-color .2s}
-.fg input:focus{border-color:var(--primary-light);background:white}
-.btn-login{width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer}
-.login-err{background:var(--danger-bg);color:var(--danger);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;margin-top:12px;text-align:center;display:none}
-.app{display:none;max-width:430px;margin:0 auto;min-height:100vh}
-.app-header{background:var(--primary);color:white;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.hdr-left{display:flex;align-items:center;gap:10px}
-.hdr-av{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
-.hdr-name{font-size:14px;font-weight:600}
-.hdr-role{font-size:10px;background:var(--accent);color:var(--primary);padding:2px 7px;border-radius:20px;font-weight:700;display:inline-block;margin-top:2px}
-.btn-logout{background:rgba(255,255,255,.15);border:none;color:white;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;cursor:pointer;border:none;background:transparent;color:var(--text3);font-size:10px;gap:3px;transition:color .15s}
-.nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nav-item.active{color:var(--primary)}
-.page-content{padding:14px 14px 80px}
-.page{display:none}
-.page.active{display:block}
-.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
-.card-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px}
-.card-title svg{width:16px;height:16px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.card-body{padding:14px 16px}
-.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.metric-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px;box-shadow:var(--shadow)}
-.metric-card.full{grid-column:1/-1}
-.metric-label{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-.metric-value{font-size:22px;font-weight:700}
-.metric-value.green{color:var(--success)}
-.metric-value.red{color:var(--danger)}
-.metric-value.blue{color:var(--info)}
-.metric-sub{font-size:11px;color:var(--text3);margin-top:3px}
-.sakin-item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer}
-.sakin-item:last-child{border-bottom:none}
-.sakin-av{width:38px;height:38px;border-radius:50%;background:var(--info-bg);color:var(--info);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-.sakin-av.borc{background:var(--danger-bg);color:var(--danger)}
-.sakin-av.ok{background:var(--success-bg);color:var(--success)}
-.sakin-info{flex:1;min-width:0}
-.sakin-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sakin-meta{font-size:11px;color:var(--text2);margin-top:2px}
-.badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600}
-.badge.kiraci{background:var(--info-bg);color:var(--info)}
-.badge.sahip{background:var(--success-bg);color:var(--success)}
-.badge.borc{background:var(--danger-bg);color:var(--danger)}
-.badge.odendi{background:var(--success-bg);color:var(--success)}
-.badge.bekliyor{background:var(--warning-bg);color:var(--warning)}
-.search-box{display:flex;align-items:center;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;gap:8px;margin-bottom:10px}
-.search-box svg{width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0}
-.search-box input{border:none;background:transparent;outline:none;font-size:13px;color:var(--text);width:100%}
-.filter-row{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px}
-.filter-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:11px;color:var(--text2);cursor:pointer;white-space:nowrap;font-weight:500}
-.filter-btn.active{background:var(--primary);color:white;border-color:var(--primary)}
-.modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,.55);z-index:200;display:flex;align-items:flex-end;justify-content:center}
-.modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:430px;max-height:90vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom)}
-.modal-header{padding:18px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
-.modal-title{font-size:16px;font-weight:700;color:var(--primary)}
-.btn-close{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:none;cursor:pointer;font-size:18px;color:var(--text2)}
-.modal-body{padding:16px}
-.ekstre-hdr{background:var(--primary);color:white;border-radius:var(--radius);padding:16px;margin-bottom:14px}
-.ekstre-daire{font-size:22px;font-weight:800}
-.ekstre-kisi{font-size:14px;opacity:.85;margin-top:2px}
-.ekstre-tip{display:inline-block;background:var(--accent);color:var(--primary);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:8px}
-.ekstre-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
-.ekstre-stat{background:var(--surface2);border-radius:var(--radius-sm);padding:10px;text-align:center;border:1px solid var(--border)}
-.ekstre-stat-lbl{font-size:10px;color:var(--text2);font-weight:600;text-transform:uppercase}
-.ekstre-stat-val{font-size:15px;font-weight:700;margin-top:3px}
-.ay-sel-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.ay-btn{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:500;cursor:pointer;color:var(--text2)}
-.ay-btn.active{background:var(--primary);color:white;border-color:var(--primary)}
-.ay-tablo{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
-.ay-tablo th{background:var(--surface2);padding:8px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border)}
-.ay-tablo td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text)}
-.ay-tablo tr:last-child td{border-bottom:none}
-.amount{text-align:right;font-weight:600}
-.amount.green{color:var(--success)}
-.amount.red{color:var(--danger)}
-.bakiye-row{display:flex;justify-content:space-between;align-items:center;background:var(--primary);color:white;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px}
-.bakiye-row .lbl{font-size:12px;opacity:.8}
-.bakiye-row .val{font-size:18px;font-weight:800}
-.bakiye-row .val.clear{color:var(--accent)}
-.btn-pdf{width:100%;padding:13px;background:var(--accent);color:var(--primary);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px}
-.btn-pdf svg{width:18px;height:18px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.duyuru-item{padding:12px 0;border-bottom:1px solid var(--border)}
-.duyuru-item:last-child{border-bottom:none}
-.duyuru-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px}
-.duyuru-yazar{font-size:11px;font-weight:700;color:var(--primary)}
-.duyuru-tarih{font-size:10px;color:var(--text3)}
-.duyuru-text{font-size:13px;color:var(--text);line-height:1.5}
-.btn-primary{background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%}
-textarea.fi{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);outline:none;resize:none;background:var(--surface2);font-family:inherit}
-textarea.fi:focus{border-color:var(--primary-light);background:white}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.form-row.full{grid-template-columns:1fr}
-.form-field label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-.form-field select,.form-field input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);outline:none;background:var(--surface2);font-family:inherit}
-.form-field select:focus,.form-field input:focus{border-color:var(--primary-light);background:white}
-.tip-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.tip-btn{padding:10px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:13px;font-weight:600;cursor:pointer;text-align:center}
-.tip-btn.gelir.active{background:var(--success-bg);border-color:var(--success);color:var(--success)}
-.tip-btn.gider.active{background:var(--danger-bg);border-color:var(--danger);color:var(--danger)}
-.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--success);color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:300;display:none;box-shadow:var(--shadow-lg);white-space:nowrap}
-.toast.err{background:var(--danger)}
-.kasa-tablo{width:100%;border-collapse:collapse;font-size:12px}
-.kasa-tablo th{background:var(--primary);color:white;padding:9px 8px;text-align:center;font-size:11px;font-weight:600}
-.kasa-tablo th:first-child{text-align:left;padding-left:12px}
-.kasa-tablo td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--border);font-size:12px}
-.kasa-tablo td:first-child{text-align:left;padding-left:12px;font-weight:600;color:var(--text)}
-.kasa-tablo tr.aktif{background:var(--info-bg)}
-.kasa-tablo tr.toplam td{border-top:2px solid var(--primary);font-weight:700;background:var(--surface2)}
-.loading{display:flex;align-items:center;justify-content:center;padding:24px;color:var(--text3);font-size:13px;gap:8px}
-.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-.islem-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}
-.islem-row:last-child{border-bottom:none}
-.islem-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.islem-av.g{background:var(--success-bg);color:var(--success)}
-.islem-av.e{background:var(--danger-bg);color:var(--danger)}
-.islem-info{flex:1;min-width:0}
-.islem-kisi{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.islem-meta{font-size:10px;color:var(--text3);margin-top:2px}
-.islem-tutar{font-size:13px;font-weight:700;text-align:right;flex-shrink:0}
-.rapor-ay-sel{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-@media(min-width:431px){.app{box-shadow:0 0 40px rgba(0,0,0,.12)}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d5c3a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Azra-2026">
+  <title>Azra-2026</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+<div id="app">
 
 <!-- LOGIN -->
-<div class="login-wrap" id="loginWrap">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="login-icon">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+<div id="screen-login" class="screen active">
+  <div class="login-wrap">
+    <div class="login-logo"><i class="ti ti-building-community"></i></div>
+    <h1 class="login-title">Azra-2026</h1>
+    <p class="login-sub">Azra Sahil Sitesi Yönetim Paneli</p>
+    <div class="login-form">
+      <div id="login-error" class="error-msg" style="display:none">Kullanıcı adı veya şifre hatalı.</div>
+      <div class="input-group"><label>Kullanıcı Adı</label><input id="inp-user" type="text" placeholder="kullanıcı adınız" autocomplete="off" autocapitalize="none"></div>
+      <div class="input-group"><label>Şifre</label>
+        <div style="position:relative">
+          <input id="inp-pass" type="password" placeholder="şifreniz">
+          <button class="pass-toggle" onclick="togglePass()" type="button"><i class="ti ti-eye" id="eye-icon"></i></button>
+        </div>
       </div>
-      <div class="login-title">Site Yönetim Paneli</div>
-      <div class="login-sub">Lütfen giriş yapın</div>
+      <button class="btn primary" onclick="doLogin()"><i class="ti ti-login"></i> Giriş Yap</button>
     </div>
-    <div class="fg">
-      <label>Kullanıcı Adı</label>
-      <input type="text" id="loginUser" placeholder="Kullanıcı adınız" autocomplete="username">
-    </div>
-    <div class="fg">
-      <label>Şifre</label>
-      <input type="password" id="loginPass" placeholder="Şifreniz" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="btn-login" onclick="doLogin()">Giriş Yap</button>
-    <div class="login-err" id="loginErr">Kullanıcı adı veya şifre hatalı.</div>
+    <p class="login-version">v6.0 — Azra Sahil Sitesi · 2026</p>
   </div>
 </div>
 
-<!-- APP -->
-<div class="app" id="app">
-  <div class="app-header">
-    <div class="hdr-left">
-      <div class="hdr-av" id="hdrAv">F</div>
-      <div>
-        <div class="hdr-name" id="hdrName">Ferhat</div>
-        <span class="hdr-role" id="hdrRole">YÖNETİCİ</span>
-      </div>
-    </div>
-    <button class="btn-logout" onclick="doLogout()">Çıkış</button>
+<!-- ANA UYGULAMA -->
+<div id="screen-main" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">A</div>
+    <div class="topbar-title">Azra Sahil Sitesi</div>
+    <div id="topbar-badge" class="role-badge"></div>
+    <button class="icon-btn" onclick="doLogout()"><i class="ti ti-logout"></i></button>
   </div>
 
-  <div class="page-content">
+  <div id="tab-content">
 
-    <!-- DASHBOARD -->
-    <div class="page active" id="page-dashboard">
-      <div class="metrics-grid">
-        <div class="metric-card full" style="background:linear-gradient(135deg,#1a3a5c,#2a5f8f);border:none">
-          <div class="metric-label" style="color:rgba(255,255,255,.7)">Kasa Bakiyesi</div>
-          <div class="metric-value" style="color:#e8b84b;font-size:28px" id="kasaBakiye">—</div>
-          <div class="metric-sub" style="color:rgba(255,255,255,.6)" id="kasaAy">Yükleniyor...</div>
+    <!-- ANA SAYFA -->
+    <div id="tab-home" class="tab-panel active">
+      <div class="content">
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-label" id="s-ay-label">HAZİRAN Tahsilat</div><div class="stat-value green" id="s-tahsilat">0 ₺</div></div>
+          <div class="stat-card"><div class="stat-label">Daire Sayısı</div><div class="stat-value">58</div></div>
+          <div class="stat-card"><div class="stat-label" id="s-borc-label">HAZİRAN Aidat Borcu</div><div class="stat-value red" id="s-borc">0 ₺</div></div>
+          <div class="stat-card"><div class="stat-label">Kasa Bakiyesi</div><div class="stat-value" style="color:#00bcd4" id="s-kasa">0 ₺</div></div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label" style="color:var(--success)">Aylık Gelir</div>
-          <div class="metric-value green" id="aylikGelir">—</div>
-          <div class="metric-sub" id="aylikGelirAy"></div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label" style="color:var(--danger)">Aylık Gider</div>
-          <div class="metric-value red" id="aylikGider">—</div>
-          <div class="metric-sub" id="aylikGiderAy"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Borçlu Daireler
+        <div class="card">
+          <div class="card-head">
+            <div><span class="section-title" id="odeme-ay-label">AİDAT</span><span style="font-size:11px;color:#888;margin-left:6px">ödeme durumu</span></div>
+            <span id="odeme-oran" class="badge green-badge"></span>
           </div>
-          <span class="badge borc" id="borcluSayi">—</span>
+          <div class="progress-bar"><div class="progress-fill" id="odeme-progress"></div></div>
+          <div class="progress-labels"><span id="pr-odendi">0 ödedi</span><span id="pr-bekleyen">0 bekliyor</span></div>
         </div>
-        <div class="card-body" id="borcluListesi"><div class="loading"><div class="spinner"></div>Yükleniyor...</div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            Yıllık Kasa Özeti
-          </div>
+        <div class="card">
+          <div class="card-head"><span class="section-title">Son İşlemler</span></div>
+          <div id="son-islemler"></div>
         </div>
-        <div style="overflow-x:auto">
-          <table class="kasa-tablo">
-            <thead><tr><th>Ay</th><th>Gelir</th><th>Gider</th><th>Kasa</th></tr></thead>
-            <tbody id="kasaTablo"><tr><td colspan="4"><div class="loading"><div class="spinner"></div>Yükleniyor...</div></td></tr></tbody>
-          </table>
-        </div>
+        <div class="page-bottom"></div>
       </div>
     </div>
 
-    <!-- SAKİNLER -->
-    <div class="page" id="page-sakinler">
-      <div class="search-box">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Sakin adı veya daire no..." id="sakinSearch" oninput="filterSakinler()">
-      </div>
-      <div class="filter-row">
-        <button class="filter-btn active" onclick="setFilter('tumu',this)">Tümü</button>
-        <button class="filter-btn" onclick="setFilter('kiraci',this)">Kiracı</button>
-        <button class="filter-btn" onclick="setFilter('sahip',this)">Ev Sahibi</button>
-        <button class="filter-btn" onclick="setFilter('borc',this)">Borçlu</button>
-      </div>
-      <div id="sakinListesi"><div class="loading"><div class="spinner"></div>Yükleniyor...</div></div>
-    </div>
-
-    <!-- DUYURULAR -->
-    <div class="page" id="page-duyuru">
-      <div class="card" id="duyuruYazCard">
-        <div class="card-head">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-            Duyuru Yaz
-          </div>
+    <!-- DAİRELER -->
+    <div id="tab-daireler" class="tab-panel">
+      <div class="content">
+        <div class="search-bar">
+          <i class="ti ti-search"></i>
+          <input type="text" id="daire-search" placeholder="Daire no veya sakin ara..." oninput="filterDaireler()">
+          <button class="icon-btn-sm" onclick="clearSearch()"><i class="ti ti-x"></i></button>
         </div>
-        <div class="card-body">
-          <textarea class="fi" id="duyuruText" rows="3" placeholder="Tüm sakinlere duyurunuzu yazın..."></textarea>
-          <button class="btn-primary" style="margin-top:10px" onclick="duyuruGonder()">Duyuru Gönder</button>
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="setFilter('hepsi',this)">Hepsi</button>
+          <button class="filter-chip" onclick="setFilter('borclu',this)">Borçlu</button>
+          <button class="filter-chip" onclick="setFilter('odendi',this)">Ödenmiş</button>
+          <button class="filter-chip" onclick="setFilter('kiraci',this)">Kiracı</button>
+          <button class="filter-chip" onclick="setFilter('evsahibi',this)">Ev Sahibi</button>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-            Son Duyurular
-          </div>
-        </div>
-        <div class="card-body" id="duyuruListesi"><div class="loading"><div class="spinner"></div>Yükleniyor...</div></div>
+        <div id="daire-list"></div>
+        <div class="page-bottom"></div>
       </div>
     </div>
 
-    <!-- VERİ GİRİŞİ -->
-    <div class="page" id="page-veri">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Yeni İşlem Kaydet
-          </div>
+    <!-- İŞLEMLER -->
+    <div id="tab-islemler" class="tab-panel">
+      <div class="content">
+        <div class="sub-tab-bar">
+          <button class="sub-tab active" onclick="switchSubTab('gelirler',this)">Gelirler</button>
+          <button class="sub-tab" onclick="switchSubTab('giderler',this)">Giderler</button>
+          <button class="sub-tab" onclick="switchSubTab('kasa',this)">Kasa</button>
+          <button class="sub-tab" onclick="switchSubTab('hizmet',this)">Hizmet</button>
+          <button class="sub-tab" onclick="switchSubTab('borclar',this)">Borçlar</button>
         </div>
-        <div class="card-body">
-          <div class="tip-toggle">
-            <button class="tip-btn gelir active" id="tipGelir" onclick="setTip('gelir')">+ Gelir</button>
-            <button class="tip-btn gider" id="tipGider" onclick="setTip('gider')">− Gider</button>
+        <!-- GELİRLER -->
+        <div id="panel-gelirler">
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <button class="btn green" style="flex:1" onclick="openModal('modal-gelir')"><i class="ti ti-trending-up"></i> Yeni Gelir</button>
+            <button class="btn" style="background:#e3f0ff;color:#1565c0;border-color:#bad3f5;flex:1" onclick="openTopluGelir()"><i class="ti ti-list-check"></i> Toplu Giriş</button>
+            <button onclick="scrollToTop('gelir')" style="background:#f0f4f1;border:none;border-radius:8px;padding:8px 10px;cursor:pointer"><i class="ti ti-arrow-up" style="color:#0d5c3a;font-size:16px"></i></button>
+            <button onclick="scrollToBottom('gelir')" style="background:#f0f4f1;border:none;border-radius:8px;padding:8px 10px;cursor:pointer"><i class="ti ti-arrow-down" style="color:#0d5c3a;font-size:16px"></i></button>
           </div>
-          <div class="form-row">
-            <div class="form-field">
-              <label>Tarih</label>
-              <input type="date" id="islemTarih">
-            </div>
-            <div class="form-field">
-              <label>Dönem</label>
-              <select id="islemDonem">
-                <option>OCAK</option><option>ŞUBAT</option><option>MART</option><option>NİSAN</option>
-                <option>MAYIS</option><option selected>HAZİRAN</option><option>TEMMUZ</option>
-                <option>AĞUSTOS</option><option>EYLÜL</option><option>EKİM</option><option>KASIM</option><option>ARALIK</option>
-              </select>
-            </div>
+          <div class="filter-row">
+            <button class="filter-chip gelir-filtre-chip active" onclick="gelirAyFiltre('hepsi',this)">Hepsi</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('OCAK',this)">Oca</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('ŞUBAT',this)">Şub</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('MART',this)">Mar</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('NİSAN',this)">Nis</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('MAYIS',this)">May</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('HAZİRAN',this)">Haz</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('TEMMUZ',this)">Tem</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('AĞUSTOS',this)">Ağu</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('EYLÜL',this)">Eyl</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('EKİM',this)">Eki</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('KASIM',this)">Kas</button>
+            <button class="filter-chip gelir-filtre-chip" onclick="gelirAyFiltre('ARALIK',this)">Ara</button>
           </div>
-          <div class="form-row full">
-            <div class="form-field">
-              <label>Daire / Muhatap</label>
-              <select id="islemDaire">
-                <option value="">Daire seç / genel</option>
-                <option>D.1 - Cemre Baker</option><option>D.2 - Kalgay Büyükkaya</option>
-                <option>D.3 - Hafiye Bulut</option><option>D.4 - Ciran Ay</option>
-                <option>D.5 - İbrahim Ünal</option><option>D.6 - Aleksandra Riv</option>
-                <option>D.7 - Ömür Deniz Mamuk</option><option>D.16 - Anna</option>
-                <option>D.17 - Mürvet Gökbulut</option><option>D.20 - Muzaffer Çapan</option>
-                <option>D.24 - Nadir Çetinkaya</option><option>D.30 - Habibe Güneş</option>
-                <option>D.33 - Artem Danilenko</option><option>D.36 - Zaure Setova</option>
-                <option>D.41 - Hakan Keselikoğlu</option><option>D.43 - Mehmet Baldiş</option>
-                <option>D.46 - Ayşe Çam</option><option>D.52 - Emine Metin</option>
-                <option>D.53 - Ferhat Özdal</option><option>D.55 - Etem Yavuz</option>
-                <option>D.56 - Muhammet Mehmet Görmez</option>
-                <option>Genel Gider</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-field">
-              <label>Tutar (₺)</label>
-              <input type="number" id="islemTutar" placeholder="0,00" step="0.01">
-            </div>
-            <div class="form-field">
-              <label>Açıklama</label>
-              <select id="islemAciklama">
-                <option>Aidat Tahsilatı</option><option>Diğer Tahsilatlar</option>
-                <option>Yönetim Giderleri</option><option>Hizmet Giderleri</option>
-                <option>Bakım / Onarım</option><option>Elektrik</option><option>Su</option>
-                <option>Doğalgaz</option><option>Temizlik</option><option>Güvenlik</option><option>Diğer</option>
-              </select>
-            </div>
-          </div>
-          <button class="btn-primary" onclick="islemKaydet()">Kaydet</button>
+          <div id="gelir-list"></div>
         </div>
+        <!-- GİDERLER -->
+        <div id="panel-giderler" style="display:none">
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <button class="btn danger" style="flex:1" onclick="openModal('modal-gider')"><i class="ti ti-trending-down"></i> Yeni Gider</button>
+            <button onclick="scrollToTop('gider')" style="background:#f0f4f1;border:none;border-radius:8px;padding:8px 10px;cursor:pointer"><i class="ti ti-arrow-up" style="color:#0d5c3a;font-size:16px"></i></button>
+            <button onclick="scrollToBottom('gider')" style="background:#f0f4f1;border:none;border-radius:8px;padding:8px 10px;cursor:pointer"><i class="ti ti-arrow-down" style="color:#0d5c3a;font-size:16px"></i></button>
+          </div>
+          <div class="filter-row">
+            <button class="filter-chip gider-filtre-chip active" onclick="giderAyFiltre('hepsi',this)">Hepsi</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('OCAK',this)">Oca</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('ŞUBAT',this)">Şub</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('MART',this)">Mar</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('NİSAN',this)">Nis</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('MAYIS',this)">May</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('HAZİRAN',this)">Haz</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('TEMMUZ',this)">Tem</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('AĞUSTOS',this)">Ağu</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('EYLÜL',this)">Eyl</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('EKİM',this)">Eki</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('KASIM',this)">Kas</button>
+            <button class="filter-chip gider-filtre-chip" onclick="giderAyFiltre('ARALIK',this)">Ara</button>
+          </div>
+          <div id="gider-list"></div>
+        </div>
+        <!-- KASA -->
+        <div id="panel-kasa" style="display:none"><div id="kasa-ozet"></div></div>
+        <!-- HİZMET -->
+        <div id="panel-hizmet" style="display:none">
+          <button class="btn green" style="margin-bottom:12px" onclick="openModal('modal-hs-ekle')"><i class="ti ti-plus"></i> Hizmet Sağlayıcı Ekle</button>
+          <div id="hs-list"></div>
+        </div>
+        <!-- EK BORÇLAR -->
+        <div id="panel-borclar" style="display:none">
+          <div class="alert-info" style="margin-bottom:12px"><i class="ti ti-info-circle"></i> Ek borçlar daire bakiyelerine otomatik yansır. Havuz bakım, özel gider gibi masraflar için kullanın.</div>
+          <button class="btn" style="background:#fff3cd;color:#b8860b;border-color:#ffe082;margin-bottom:12px" onclick="openEkBorc()"><i class="ti ti-plus"></i> Ek Borç Ekle</button>
+          <div id="eb-list"></div>
+        </div>
+        <div class="page-bottom"></div>
       </div>
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Son İşlemler
-          </div>
+    </div>
+
+    <!-- PERSONEL -->
+    <div id="tab-puantaj" class="tab-panel">
+      <div class="content">
+        <div class="sub-tab-bar">
+          <button class="sub-tab active" onclick="switchPuantajTab('ozluk',this)">Özlük</button>
+          <button class="sub-tab" onclick="switchPuantajTab('puantaj',this)">Puantaj</button>
         </div>
-        <div class="card-body" style="padding:0 16px" id="islemListesi"><div class="loading"><div class="spinner"></div>Yükleniyor...</div></div>
+        <div id="panel-ozluk">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+              <div style="width:56px;height:56px;border-radius:14px;background:#0d5c3a;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-user" style="color:#fff;font-size:28px"></i></div>
+              <div style="flex:1"><div id="personel-ad-label" style="font-size:17px;font-weight:700;color:#1a1a1a"></div><div id="personel-unvan-label" style="font-size:13px;color:#888"></div></div>
+              <button id="ozluk-duzenle-btn" onclick="ozlukDuzenle()" style="background:#e4f5ec;border:none;border-radius:10px;padding:8px 12px;cursor:pointer;color:#0d5c3a;font-size:13px;font-weight:600;display:none"><i class="ti ti-pencil"></i> Düzenle</button>
+            </div>
+            <div class="section-title" style="margin-bottom:12px">Kişisel Bilgiler</div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-id-badge"></i> Ad Soyad</span><span class="ozluk-val" id="ov-adsoyad">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-fingerprint"></i> TC Kimlik No</span><span class="ozluk-val" id="ov-tc">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-cake"></i> Doğum Tarihi</span><span class="ozluk-val" id="ov-dogum">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-phone"></i> Telefon</span><span class="ozluk-val" id="ov-tel">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-map-pin"></i> Adres</span><span class="ozluk-val" id="ov-adres">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-mail"></i> E-posta</span><span class="ozluk-val" id="ov-eposta">—</span></div>
+            <div class="divider" style="margin:14px 0"></div>
+            <div class="section-title" style="margin-bottom:12px">İş Bilgileri</div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-briefcase"></i> Görev</span><span class="ozluk-val" id="ov-unvan">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-calendar-plus"></i> İşe Giriş</span><span class="ozluk-val" id="ov-giris">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-clock-hour4"></i> Çalışma Saati</span><span class="ozluk-val" id="ov-saat">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-coin"></i> Net Maaş</span><span class="ozluk-val" id="ov-maas">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-coin"></i> Brüt Maaş</span><span class="ozluk-val" id="ov-maas-brut">—</span></div>
+            <div class="divider" style="margin:14px 0"></div>
+            <div class="section-title" style="margin-bottom:12px">Banka / SGK</div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-building-bank"></i> Banka</span><span class="ozluk-val" id="ov-banka">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-credit-card"></i> IBAN</span><span class="ozluk-val" id="ov-iban" style="font-size:12px;word-break:break-all">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-shield-check"></i> SGK Sicil</span><span class="ozluk-val" id="ov-sgk">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-file-certificate"></i> Sigorta</span><span class="ozluk-val" id="ov-sigorta">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-heart-rate-monitor"></i> Sağlık Sig.</span><span class="ozluk-val" id="ov-saglik">—</span></div>
+            <div class="divider" style="margin:14px 0"></div>
+            <div class="section-title" style="margin-bottom:12px">Acil & Diğer</div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-emergency-bed"></i> Acil Kişi</span><span class="ozluk-val" id="ov-acil">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-phone-call"></i> Acil Tel</span><span class="ozluk-val" id="ov-acil-tel">—</span></div>
+            <div class="ozluk-row"><span class="ozluk-label"><i class="ti ti-notes"></i> Notlar</span><span class="ozluk-val" id="ov-notlar">—</span></div>
+          </div>
+          <div class="page-bottom"></div>
+        </div>
+        <div id="panel-puantaj" style="display:none">
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <button onclick="puantajAyDegistir(-1)" style="background:#f0f4f1;border-radius:8px;padding:8px 12px;border:none;cursor:pointer"><i class="ti ti-chevron-left" style="color:#0d5c3a;font-size:20px"></i></button>
+              <div id="puantaj-ay-baslik" style="font-size:16px;font-weight:700;color:#1a1a1a"></div>
+              <button onclick="puantajAyDegistir(1)" style="background:#f0f4f1;border-radius:8px;padding:8px 12px;border:none;cursor:pointer"><i class="ti ti-chevron-right" style="color:#0d5c3a;font-size:20px"></i></button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+              <div style="background:#e4f5ec;border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#0d5c3a" id="p-stat-calisma">0</div><div style="font-size:10px;color:#0d5c3a;font-weight:600">Çalışma</div></div>
+              <div style="background:#e3f0ff;border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#1565c0" id="p-stat-pazar">0</div><div style="font-size:10px;color:#1565c0;font-weight:600">Pazar</div></div>
+              <div style="background:#f3e8ff;border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#7b1fa2" id="p-stat-rt">0</div><div style="font-size:10px;color:#7b1fa2;font-weight:600">Res.Tatil</div></div>
+              <div style="background:#fff8e1;border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#b8860b" id="p-stat-yi">0</div><div style="font-size:10px;color:#b8860b;font-weight:600">Yıl.İzin</div></div>
+              <div style="background:#fde8e8;border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#c0392b" id="p-stat-iz">0</div><div style="font-size:10px;color:#c0392b;font-weight:600">İzin</div></div>
+              <div style="background:#fde8e8;border-radius:10px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#c0392b" id="p-stat-rp">0</div><div style="font-size:10px;color:#c0392b;font-weight:600">Rapor</div></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+              <span style="font-size:11px;padding:3px 8px;border-radius:6px;background:#e4f5ec;color:#0d5c3a;font-weight:600">X Çalıştı</span>
+              <span style="font-size:11px;padding:3px 8px;border-radius:6px;background:#e3f0ff;color:#1565c0;font-weight:600">P Pazar</span>
+              <span style="font-size:11px;padding:3px 8px;border-radius:6px;background:#f3e8ff;color:#7b1fa2;font-weight:600">RT Tatil</span>
+              <span style="font-size:11px;padding:3px 8px;border-radius:6px;background:#fff8e1;color:#b8860b;font-weight:600">Yİ Yıl.İzin</span>
+              <span style="font-size:11px;padding:3px 8px;border-radius:6px;background:#fde8e8;color:#c0392b;font-weight:600">İZ İzin</span>
+              <span style="font-size:11px;padding:3px 8px;border-radius:6px;background:#fde8e8;color:#c0392b;font-weight:600">RP Rapor</span>
+            </div>
+            <p style="font-size:11px;color:#aaa;margin-bottom:12px">Güne dokunun, kod sırayla döner.</p>
+            <div id="puantaj-grid" class="puantaj-grid"></div>
+          </div>
+          <div class="page-bottom"></div>
+        </div>
       </div>
     </div>
 
     <!-- RAPORLAR -->
-    <div class="page" id="page-rapor">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            Aylık Gelir/Gider Raporu
+    <div id="tab-raporlar" class="tab-panel">
+      <div class="content">
+        <div class="card" style="margin-bottom:10px">
+          <div class="section-title" style="margin-bottom:10px">Rapor Ayı Seç</div>
+          <div class="filter-row">
+            <button class="filter-chip rapor-ay-chip active" onclick="raporAySecimi('OCAK',this)">Oca</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('ŞUBAT',this)">Şub</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('MART',this)">Mar</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('NİSAN',this)">Nis</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('MAYIS',this)">May</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('HAZİRAN',this)">Haz</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('TEMMUZ',this)">Tem</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('AĞUSTOS',this)">Ağu</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('EYLÜL',this)">Eyl</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('EKİM',this)">Eki</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('KASIM',this)">Kas</button>
+            <button class="filter-chip rapor-ay-chip" onclick="raporAySecimi('ARALIK',this)">Ara</button>
           </div>
         </div>
-        <div class="card-body">
-          <div class="form-field" style="margin-bottom:12px">
-            <label>Ay Seçin</label>
-            <select id="raporAySelect" onchange="raporAyDegis()">
-              <option value="OCAK">Ocak</option><option value="ŞUBAT">Şubat</option>
-              <option value="MART">Mart</option><option value="NİSAN">Nisan</option>
-              <option value="MAYIS">Mayıs</option><option value="HAZİRAN" selected>Haziran</option>
-              <option value="TEMMUZ">Temmuz</option><option value="AĞUSTOS">Ağustos</option>
-              <option value="EYLÜL">Eylül</option><option value="EKİM">Ekim</option>
-              <option value="KASIM">Kasım</option><option value="ARALIK">Aralık</option>
-            </select>
+        <div class="card" id="rapor-card">
+          <div class="rapor-header">
+            <div><div class="rapor-title">Azra Sahil Sitesi</div><div class="rapor-sub" id="rapor-tarih">2026 Yönetim Raporu</div></div>
+            <div class="rapor-logo">A26</div>
           </div>
-          <div id="raporOzet" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"></div>
-          <button class="btn-pdf" onclick="raporPdfIndir()">
-            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            PDF Raporu İndir
-          </button>
-          <div id="raporListesi"><div class="loading"><div class="spinner"></div>Yükleniyor...</div></div>
+          <div class="section-title" style="margin-bottom:10px">Aylık Kasa Özeti</div>
+          <div id="rapor-kasa-table"></div>
+          <div class="divider"></div>
+          <div class="section-title" style="margin-bottom:10px">Bakiye Borç Dökümü</div>
+          <div id="rapor-borc-table"></div>
+          <div class="divider"></div>
+          <div id="rapor-ay-detay"></div>
         </div>
+        <div class="action-stack">
+          <button class="btn green" onclick="indirRapor('html')"><i class="ti ti-download"></i> PDF / JPG İndir</button>
+          <button class="btn wa" onclick="raporPaylas()"><i class="ti ti-brand-whatsapp"></i> WhatsApp Grubuna Gönder</button>
+          <button class="btn blue" onclick="raporYayinla()"><i class="ti ti-world"></i> Siteye Yayınla</button>
+        </div>
+        <div class="page-bottom"></div>
       </div>
     </div>
 
   </div>
 
-  <nav class="bottom-nav">
-    <button class="nav-item active" onclick="goPage('dashboard',this)">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Özet
-    </button>
-    <button class="nav-item" onclick="goPage('sakinler',this)">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      Sakinler
-    </button>
-    <button class="nav-item" onclick="goPage('duyuru',this)">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-      Duyuru
-    </button>
-    <button class="nav-item" onclick="goPage('rapor',this)">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      Rapor
-    </button>
-    <button class="nav-item" id="navVeri" onclick="goPage('veri',this)">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Veri
-    </button>
+  <nav class="bottomnav">
+    <button class="nav-item active" id="nav-home" onclick="switchTab('home')"><i class="ti ti-home"></i><span>Ana Sayfa</span></button>
+    <button class="nav-item" id="nav-daireler" onclick="switchTab('daireler')"><i class="ti ti-building"></i><span>Daireler</span></button>
+    <button class="nav-item" id="nav-islemler" onclick="switchTab('islemler')"><i class="ti ti-receipt"></i><span>İşlemler</span></button>
+    <button class="nav-item" id="nav-puantaj" onclick="switchTab('puantaj')"><i class="ti ti-user-check"></i><span>Personel</span></button>
+    <button class="nav-item" id="nav-raporlar" onclick="switchTab('raporlar')"><i class="ti ti-chart-bar"></i><span>Raporlar</span></button>
   </nav>
+  <button class="fab" id="fab" onclick="openFabMenu()" style="display:none"><i class="ti ti-plus"></i></button>
+</div>
 </div>
 
-<!-- EKSTRE MODAL -->
-<div class="modal-overlay" id="ekstreModal" style="display:none" onclick="closeEkstreOuter(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="ekstreTitle">Ekstre</div>
-      <button class="btn-close" onclick="closeEkstre()">×</button>
-    </div>
-    <div class="modal-body" id="ekstreBody"></div>
+<!-- ===== MODALLER ===== -->
+
+<!-- FAB MENU -->
+<div class="modal-overlay" id="modal-fab">
+  <div class="modal bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">Yeni İşlem</h2>
+    <button class="btn green" onclick="closeModal('modal-fab');openModal('modal-gelir')"><i class="ti ti-trending-up"></i> Gelir Ekle</button>
+    <button class="btn" style="background:#e3f0ff;color:#1565c0;border-color:#bad3f5" onclick="closeModal('modal-fab');openTopluGelir()"><i class="ti ti-list-check"></i> Toplu Gelir Girişi</button>
+    <button class="btn danger" onclick="closeModal('modal-fab');openModal('modal-gider')"><i class="ti ti-trending-down"></i> Gider Ekle</button>
+    <button class="btn" style="background:#f3e8ff;color:#7b1fa2;border-color:#d4b8f0" onclick="closeModal('modal-fab');openModal('modal-hs-ekle')"><i class="ti ti-tools"></i> Hizmet Sağlayıcı Ekle</button>
+    <button class="btn" style="background:#fff3cd;color:#b8860b;border-color:#ffe082" onclick="closeModal('modal-fab');openEkBorc()"><i class="ti ti-file-invoice"></i> Ek Borç Ekle</button>
+    <button class="btn" onclick="closeModal('modal-fab')">İptal</button>
   </div>
 </div>
 
-<div class="toast" id="toast">✓ Kaydedildi</div>
-
-<script>
-const SB_URL = 'https://qbutqcwajoxxuqdcjnda.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFidXRxY3dham94eHVxZGNqbmRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMjU0NzEsImV4cCI6MjA5NjYwMTQ3MX0.yNsvOHgXwiD7LibsKqkIT3Og9c3PDvKS4y5fTRY7_tE';
-
-const HDRS = {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
-
-async function sbGet(table, query=''){
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?${query}&order=created_at.desc`, {headers:{...HDRS,'Prefer':'return=representation'}});
-  return r.json();
-}
-async function sbPost(table, data){
-  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {method:'POST',headers:{...HDRS,'Prefer':'return=representation'},body:JSON.stringify(data)});
-  return r.json();
-}
-
-const USERS = {
-  'ferhat':  {pass:'ferhat1234', name:'Ferhat Özdal',           role:'admin',  init:'FÖ'},
-  'kalgay':  {pass:'kalgay1234', name:'Kalgay Büyükkaya',       role:'member', init:'KB'},
-  'mehmet':  {pass:'mehmet1234', name:'Mehmet',                 role:'member', init:'M'},
-  'mustafa': {pass:'mustafa1234',name:'Mustafa',                role:'member', init:'MS'},
-  'aylin':   {pass:'aylin1234',  name:'Aylin',                  role:'member', init:'A'},
-  'çetin':   {pass:'çetin1234',  name:'Çetin Demirhan',         role:'member', init:'ÇD'},
-};
-
-const SAKINLER = [
-  {no:1,kat:1,ad:'Cemre Baker',tip:'kiraci'},
-  {no:2,kat:1,ad:'Kalgay Büyükkaya',tip:'sahip'},
-  {no:3,kat:1,ad:'Hafiye Bulut',tip:'sahip'},
-  {no:4,kat:1,ad:'Ciran Ay',tip:'sahip'},
-  {no:5,kat:2,ad:'İbrahim Ünal',tip:'sahip'},
-  {no:6,kat:2,ad:'Aleksandra Riv',tip:'sahip'},
-  {no:7,kat:2,ad:'Ömür Deniz Mamuk',tip:'sahip'},
-  {no:16,kat:4,ad:'Anna',tip:'sahip'},
-  {no:17,kat:4,ad:'Mürvet Gökbulut',tip:'kiraci'},
-  {no:20,kat:5,ad:'Muzaffer Çapan',tip:'sahip'},
-  {no:24,kat:6,ad:'Nadir Çetinkaya',tip:'sahip'},
-  {no:30,kat:8,ad:'Habibe Güneş',tip:'sahip'},
-  {no:33,kat:9,ad:'Artem Danilenko',tip:'sahip'},
-  {no:36,kat:9,ad:'Zaure Setova',tip:'kiraci'},
-  {no:41,kat:11,ad:'Hakan Keselikoğlu',tip:'sahip'},
-  {no:43,kat:11,ad:'Mehmet Baldiş',tip:'sahip'},
-  {no:46,kat:12,ad:'Ayşe Çam',tip:'sahip'},
-  {no:52,kat:13,ad:'Emine Metin',tip:'sahip'},
-  {no:53,kat:14,ad:'Ferhat Özdal',tip:'sahip'},
-  {no:55,kat:14,ad:'Etem Yavuz',tip:'kiraci'},
-  {no:56,kat:15,ad:'Muhammet Mehmet Görmez',tip:'sahip'},
-];
-
-const AY_KEYS  = ['OCAK','ŞUBAT','MART','NİSAN','MAYIS','HAZİRAN','TEMMUZ','AĞUSTOS','EYLÜL','EKİM','KASIM','ARALIK'];
-const AY_NAMES = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-const AIDAT = 1400;
-const AKTİF_AY = 'HAZİRAN';
-
-let cu = null;
-let allIslemler = [];
-let sakinFilter = 'tumu';
-let selectedSakin = null;
-
-function fmt(n){ return Number(n).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function fmtK(n){ return Number(n).toLocaleString('tr-TR',{minimumFractionDigits:0,maximumFractionDigits:0}); }
-
-function showToast(msg, err=false){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (err?' err':'');
-  t.style.display = 'block';
-  setTimeout(()=>t.style.display='none', 2800);
-}
-
-// LOGIN
-function doLogin(){
-  const u = document.getElementById('loginUser').value.trim().toLowerCase();
-  const p = document.getElementById('loginPass').value.trim();
-  const err = document.getElementById('loginErr');
-  if(USERS[u] && USERS[u].pass === p){
-    cu = {...USERS[u], username:u};
-    err.style.display = 'none';
-    document.getElementById('loginWrap').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('hdrName').textContent = cu.name.split(' ')[0];
-    document.getElementById('hdrAv').textContent = cu.init;
-    document.getElementById('hdrRole').textContent = cu.role==='admin'?'YÖNETİCİ':'ÜYE';
-    document.getElementById('navVeri').style.display = cu.role==='admin'?'flex':'none';
-    document.getElementById('islemTarih').valueAsDate = new Date();
-    loadAll();
-  } else {
-    err.style.display = 'block';
-  }
-}
-function doLogout(){
-  cu = null;
-  document.getElementById('loginWrap').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginUser').value = '';
-  document.getElementById('loginPass').value = '';
-}
-
-// NAV
-function goPage(id, btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  if(btn) btn.classList.add('active');
-  if(id==='sakinler') renderSakinler();
-  if(id==='duyuru') loadDuyurular();
-  if(id==='rapor') loadRapor();
-  if(id==='veri') loadIslemler();
-}
-
-// LOAD ALL
-async function loadAll(){
-  await Promise.all([loadDashboard(), loadIslemlerBg()]);
-}
-
-async function loadIslemlerBg(){
-  try {
-    allIslemler = await sbGet('islemler', 'limit=200');
-    if(!Array.isArray(allIslemler)) allIslemler = [];
-  } catch(e){ allIslemler = []; }
-}
-
-// DASHBOARD
-async function loadDashboard(){
-  try {
-    const islemler = await sbGet('islemler','limit=500');
-    if(!Array.isArray(islemler)){ showToast('Supabase bağlantı hatası',true); return; }
-    allIslemler = islemler;
-
-    // Aktif ay gelir/gider
-    const ayIslem = islemler.filter(i=>i.donem===AKTİF_AY);
-    const ayGelir = ayIslem.filter(i=>i.tip==='Gelir').reduce((s,i)=>s+Number(i.tutar),0);
-    const ayGider = ayIslem.filter(i=>i.tip==='Gider').reduce((s,i)=>s+Number(i.tutar),0);
-
-    // Tüm yıl kasa
-    const kasaData = buildKasa(islemler);
-    const sonKasa = kasaData.filter(k=>k.devir!==null).pop();
-    const kasaBakiye = sonKasa ? sonKasa.devir : 0;
-
-    document.getElementById('kasaBakiye').textContent = fmt(kasaBakiye)+' ₺';
-    document.getElementById('kasaAy').textContent = (sonKasa?sonKasa.ay+' ':'')+' 2026 kasa durumu';
-    document.getElementById('aylikGelir').textContent = fmt(ayGelir)+' ₺';
-    document.getElementById('aylikGelirAy').textContent = 'Haziran 2026';
-    document.getElementById('aylikGider').textContent = fmt(ayGider)+' ₺';
-    document.getElementById('aylikGiderAy').textContent = 'Haziran 2026';
-
-    // Borçlu daireler (aylık aidat ödememişler - ayda tahsilat yoksa borçlu say)
-    const borcluDaireler = SAKINLER.filter(s=>{
-      const sakinIslem = islemler.filter(i=>i.kisi && i.kisi.includes('D.'+s.no) && i.tip==='Gelir' && i.donem===AKTİF_AY);
-      return sakinIslem.length === 0;
-    });
-    document.getElementById('borcluSayi').textContent = borcluDaireler.length+' daire';
-    document.getElementById('borcluListesi').innerHTML = borcluDaireler.slice(0,6).map(s=>`
-      <div class="sakin-item" onclick="openEkstre(${s.no})">
-        <div class="sakin-av borc">${s.no}</div>
-        <div class="sakin-info"><div class="sakin-name">${s.ad}</div><div class="sakin-meta">Kat ${s.kat} · ${AKTİF_AY} aidatı bekleniyor</div></div>
-        <div style="font-size:12px;font-weight:700;color:var(--danger)">${fmt(AIDAT)} ₺</div>
-      </div>`).join('') || '<div style="color:var(--text3);font-size:13px;padding:8px 0">Borçlu daire yok.</div>';
-
-    // Kasa tablosu
-    renderKasaTablo(kasaData);
-  } catch(e){ showToast('Bağlantı hatası: '+e.message, true); }
-}
-
-function buildKasa(islemler){
-  let devir = 0;
-  return AY_KEYS.map((ay,i)=>{
-    const ayI = islemler.filter(x=>x.donem===ay);
-    const gelir = ayI.filter(x=>x.tip==='Gelir').reduce((s,x)=>s+Number(x.tutar),0);
-    const gider = ayI.filter(x=>x.tip==='Gider').reduce((s,x)=>s+Number(x.tutar),0);
-    if(gelir===0 && gider===0 && devir===0) return {ay:AY_NAMES[i],gelir:0,gider:0,devir:null};
-    devir = devir + gelir - gider;
-    return {ay:AY_NAMES[i],gelir,gider,devir};
-  });
-}
-
-function renderKasaTablo(kasaData){
-  const toplGelir = kasaData.reduce((s,k)=>s+k.gelir,0);
-  const toplGider = kasaData.reduce((s,k)=>s+k.gider,0);
-  const sonDevir = kasaData.filter(k=>k.devir!==null).pop();
-  document.getElementById('kasaTablo').innerHTML =
-    kasaData.map((k,i)=>`<tr class="${AY_NAMES[i]===AKTİF_AY.charAt(0)+AKTİF_AY.slice(1).toLowerCase()||k.ay==='Haziran'?'aktif':''}">
-      <td>${k.ay}${k.ay==='Haziran'?' ●':''}</td>
-      <td style="color:var(--success)">${k.gelir?fmtK(k.gelir):'-'}</td>
-      <td style="color:var(--danger)">${k.gider?fmtK(k.gider):'-'}</td>
-      <td style="color:${k.devir?'var(--info)':'var(--text3)'}${k.devir?';font-weight:700':''}">${k.devir!==null?fmtK(k.devir):'-'}</td>
-    </tr>`).join('') +
-    `<tr class="toplam"><td>Toplam</td><td style="color:var(--success)">${fmtK(toplGelir)}</td><td style="color:var(--danger)">${fmtK(toplGider)}</td><td style="color:var(--info)">${sonDevir?fmtK(sonDevir.devir):'-'}</td></tr>`;
-}
-
-// SAKİNLER
-function renderSakinler(q){
-  const sq = (q||document.getElementById('sakinSearch').value||'').toLowerCase();
-  const filtered = SAKINLER.filter(s=>{
-    const mq = s.ad.toLowerCase().includes(sq)||String(s.no).includes(sq);
-    const mf = sakinFilter==='tumu'||(sakinFilter==='kiraci'&&s.tip==='kiraci')||(sakinFilter==='sahip'&&s.tip==='sahip')||
-      (sakinFilter==='borc'&&!allIslemler.find(i=>i.kisi&&i.kisi.includes('D.'+s.no)&&i.tip==='Gelir'&&i.donem===AKTİF_AY));
-    return mq&&mf;
-  });
-  const list = document.getElementById('sakinListesi');
-  if(!filtered.length){ list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:20px;text-align:center">Sakin bulunamadı.</div>'; return; }
-  list.innerHTML = `<div class="card"><div class="card-body" style="padding:0 16px">` +
-    filtered.map(s=>{
-      const borc = !allIslemler.find(i=>i.kisi&&i.kisi.includes('D.'+s.no)&&i.tip==='Gelir'&&i.donem===AKTİF_AY);
-      const tahsilat = allIslemler.filter(i=>i.kisi&&i.kisi.includes('D.'+s.no)&&i.tip==='Gelir').reduce((sum,i)=>sum+Number(i.tutar),0);
-      return `<div class="sakin-item" onclick="openEkstre(${s.no})">
-        <div class="sakin-av ${borc?'borc':'ok'}">${s.no}</div>
-        <div class="sakin-info"><div class="sakin-name">${s.ad}</div><div class="sakin-meta">Kat ${s.kat} · ${s.tip==='kiraci'?'Kiracı':'Ev Sahibi'}</div></div>
-        <div style="text-align:right">
-          <span class="badge ${s.tip==='kiraci'?'kiraci':'sahip'}">${s.tip==='kiraci'?'Kiracı':'Ev Sahibi'}</span>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px">${fmt(tahsilat)} ₺</div>
-        </div>
-      </div>`;
-    }).join('') + '</div></div>';
-}
-
-function filterSakinler(){ renderSakinler(); }
-function setFilter(f,el){
-  sakinFilter=f;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  renderSakinler();
-}
-
-// EKSTRE
-function openEkstre(no){
-  selectedSakin = SAKINLER.find(s=>s.no===no);
-  renderEkstre();
-  document.getElementById('ekstreModal').style.display='flex';
-}
-
-function renderEkstre(){
-  const s = selectedSakin;
-  const sakinIslemler = allIslemler.filter(i=>i.kisi&&i.kisi.includes('D.'+s.no));
-  const gelirler = sakinIslemler.filter(i=>i.tip==='Gelir');
-  const toplamTahsilat = gelirler.reduce((sum,i)=>sum+Number(i.tutar),0);
-  const yillikBorc = AY_KEYS.length * AIDAT;
-  const bakiye = yillikBorc - toplamTahsilat;
-  document.getElementById('ekstreTitle').textContent = `Daire ${s.no} · Ekstre`;
-
-  const odenenAylar = new Set(gelirler.filter(i=>i.aciklama==='Aidat Tahsilatı').map(i=>i.donem));
-
-  const ayRows = AY_KEYS.map((ay,i)=>{
-    const odendi = odenenAylar.has(ay);
-    const ayGelir = gelirler.filter(i=>i.donem===ay).reduce((sum,i)=>sum+Number(i.tutar),0);
-    return `<tr>
-      <td>${AY_NAMES[i]}</td>
-      <td class="amount red">${fmt(AIDAT)}</td>
-      <td class="amount green">${ayGelir?fmt(ayGelir):'—'}</td>
-      <td><span class="badge ${odendi?'odendi':'bekliyor'}">${odendi?'Ödendi':'Bekliyor'}</span></td>
-    </tr>`;
-  }).join('');
-
-  document.getElementById('ekstreBody').innerHTML = `
-    <div class="ekstre-hdr">
-      <div class="ekstre-daire">Daire ${s.no}</div>
-      <div class="ekstre-kisi">${s.ad}</div>
-      <span class="ekstre-tip">${s.tip==='kiraci'?'Kiracı':'Ev Sahibi'} · Kat ${s.kat}</span>
+<!-- GELİR EKLE -->
+<div class="modal-overlay" id="modal-gelir">
+  <div class="modal bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title" id="modal-gelir-title">Gelir Ekle</h2>
+    <div class="input-group"><label>İşlem Tarihi</label><input type="date" id="g-tarih"></div>
+    <div class="input-group"><label>Dönem</label>
+      <select id="g-donem"><option>OCAK</option><option>ŞUBAT</option><option>MART</option><option>NİSAN</option><option>MAYIS</option><option>HAZİRAN</option><option>TEMMUZ</option><option>AĞUSTOS</option><option>EYLÜL</option><option>EKİM</option><option>KASIM</option><option>ARALIK</option></select>
     </div>
-    <div class="ekstre-stats">
-      <div class="ekstre-stat"><div class="ekstre-stat-lbl">Yıllık Borç</div><div class="ekstre-stat-val" style="color:var(--danger)">${fmt(yillikBorc)} ₺</div></div>
-      <div class="ekstre-stat"><div class="ekstre-stat-lbl">Tahsilat</div><div class="ekstre-stat-val" style="color:var(--success)">${fmt(toplamTahsilat)} ₺</div></div>
-      <div class="ekstre-stat"><div class="ekstre-stat-lbl">Bakiye</div><div class="ekstre-stat-val" style="color:${bakiye>0?'var(--danger)':'var(--success)'}">${bakiye>0?fmt(bakiye)+' ₺':'Temiz'}</div></div>
+    <div class="input-group"><label>Daire</label><select id="g-daire"><option value="">Seçiniz...</option></select></div>
+    <div class="input-group"><label>İşlem Türü</label>
+      <select id="g-tur" onchange="gTurChange()">
+        <option value="aidat">Aidat Tahsilatı (₺1.400)</option>
+        <option value="diger">Diğer Tahsilatlar (₺1.600)</option>
+        <option value="ozel">Özel Tutar</option>
+      </select>
     </div>
-    <div style="overflow-x:auto">
-      <table class="ay-tablo">
-        <thead><tr><th>Ay</th><th>Borç</th><th>Tahsilat</th><th>Durum</th></tr></thead>
-        <tbody>${ayRows}</tbody>
-      </table>
+    <div class="input-group" id="g-tutar-group" style="display:none"><label>Tutar (₺)</label><input type="number" id="g-tutar" placeholder="0.00"></div>
+    <div class="input-group"><label>Not</label><input type="text" id="g-not" placeholder="Açıklama (isteğe bağlı)"></div>
+    <button class="btn primary" id="gelir-kaydet-btn" onclick="kaydetGelir()"><i class="ti ti-check"></i> Kaydet</button>
+    <button class="btn" onclick="closeModal('modal-gelir');resetGelirForm()">İptal</button>
+  </div>
+</div>
+
+<!-- TOPLU GELİR -->
+<div class="modal-overlay" id="modal-toplu-gelir">
+  <div class="modal bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">Toplu Gelir Girişi</h2>
+    <div class="alert-info"><i class="ti ti-info-circle"></i> Ay ve daire seçip tek seferde çok sayıda tahsilat girebilirsiniz.</div>
+    <div class="input-group"><label>İşlem Tarihi</label><input type="date" id="tg-tarih"></div>
+    <div class="input-group"><label>İşlem Türü</label>
+      <select id="tg-tur">
+        <option value="aidat">Aidat Tahsilatı (₺1.400)</option>
+        <option value="diger">Diğer Tahsilatlar (₺1.600)</option>
+      </select>
     </div>
-    <div class="bakiye-row">
-      <div><div class="lbl">Toplam Bakiye</div><div style="font-size:10px;opacity:.6">2026 yılı</div></div>
-      <div class="val ${bakiye===0?'clear':''}">${bakiye===0?'Borç Yok':fmt(bakiye)+' ₺'}</div>
-    </div>
-    <button class="btn-pdf" onclick="ekstrePdf()">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      PDF İndir
-    </button>`;
-}
-
-function closeEkstre(){ document.getElementById('ekstreModal').style.display='none'; }
-function closeEkstreOuter(e){ if(e.target===document.getElementById('ekstreModal')) closeEkstre(); }
-
-// DUYURULAR
-async function loadDuyurular(){
-  const list = document.getElementById('duyuruListesi');
-  list.innerHTML = '<div class="loading"><div class="spinner"></div>Yükleniyor...</div>';
-  try {
-    const data = await sbGet('duyurular','limit=50');
-    if(!Array.isArray(data)||!data.length){ list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">Henüz duyuru yok.</div>'; return; }
-    list.innerHTML = data.map(d=>`
-      <div class="duyuru-item">
-        <div class="duyuru-meta">
-          <span class="duyuru-yazar">${d.yazar}</span>
-          <span style="color:var(--text3)">·</span>
-          <span class="duyuru-tarih">${d.tarih}</span>
-        </div>
-        <div class="duyuru-text">${d.text}</div>
-      </div>`).join('');
-  } catch(e){ list.innerHTML='<div style="color:var(--danger);font-size:13px">Yüklenemedi.</div>'; }
-}
-
-async function duyuruGonder(){
-  const txt = document.getElementById('duyuruText').value.trim();
-  if(!txt){ showToast('Duyuru boş olamaz.',true); return; }
-  const d = new Date();
-  const tarih = d.toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'});
-  try {
-    await sbPost('duyurular',{yazar:cu.name, tarih, text:txt});
-    document.getElementById('duyuruText').value = '';
-    showToast('Duyuru gönderildi ✓');
-    loadDuyurular();
-  } catch(e){ showToast('Gönderilemedi.',true); }
-}
-
-// VERİ GİRİŞİ
-let currentTip = 'gelir';
-function setTip(t){
-  currentTip=t;
-  document.getElementById('tipGelir').className='tip-btn gelir'+(t==='gelir'?' active':'');
-  document.getElementById('tipGider').className='tip-btn gider'+(t==='gider'?' active':'');
-}
-
-async function islemKaydet(){
-  const tarih = document.getElementById('islemTarih').value;
-  const donem = document.getElementById('islemDonem').value;
-  const kisi  = document.getElementById('islemDaire').value || 'Genel';
-  const tutar = parseFloat(document.getElementById('islemTutar').value);
-  const aciklama = document.getElementById('islemAciklama').value;
-  if(!tarih||!tutar||tutar<=0){ showToast('Tarih ve tutar zorunludur.',true); return; }
-  const fis = 'FİŞ'+String(Date.now()).slice(-6);
-  const payload = {tip:currentTip==='gelir'?'Gelir':'Gider', tarih:new Date(tarih).toLocaleDateString('tr-TR'), donem, kisi, tutar, aciklama, fis};
-  try {
-    await sbPost('islemler', payload);
-    allIslemler.unshift(payload);
-    document.getElementById('islemTutar').value='';
-    showToast('İşlem kaydedildi ✓');
-    renderIslemListesi();
-    loadDashboard();
-  } catch(e){ showToast('Kaydedilemedi: '+e.message,true); }
-}
-
-async function loadIslemler(){
-  try {
-    allIslemler = await sbGet('islemler','limit=200');
-    if(!Array.isArray(allIslemler)) allIslemler=[];
-    renderIslemListesi();
-  } catch(e){}
-}
-
-function renderIslemListesi(){
-  const el = document.getElementById('islemListesi');
-  if(!allIslemler.length){ el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">Henüz işlem yok.</div>'; return; }
-  el.innerHTML = allIslemler.slice(0,15).map(i=>`
-    <div class="islem-row">
-      <div class="islem-av ${i.tip==='Gelir'?'g':'e'}">${i.tip==='Gelir'?'G':'G'}</div>
-      <div class="islem-info">
-        <div class="islem-kisi">${i.kisi}</div>
-        <div class="islem-meta">${i.tarih||''} · ${i.donem||''} · ${i.fis||''}</div>
+    <div class="input-group">
+      <label>Dönem Seç (birden fazla seçebilirsiniz)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="OCAK"> Ocak</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="ŞUBAT"> Şubat</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="MART"> Mart</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="NİSAN"> Nisan</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="MAYIS"> Mayıs</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="HAZİRAN"> Haziran</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="TEMMUZ"> Temmuz</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="AĞUSTOS"> Ağustos</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="EYLÜL"> Eylül</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="EKİM"> Ekim</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="KASIM"> Kasım</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="toplu-ay-cb" value="ARALIK"> Aralık</label>
       </div>
-      <div>
-        <div class="islem-tutar" style="color:${i.tip==='Gelir'?'var(--success)':'var(--danger)'}">${i.tip==='Gelir'?'+':'-'}${fmt(i.tutar)}</div>
-        <div style="font-size:10px;color:var(--text3);text-align:right">${i.aciklama||''}</div>
+    </div>
+    <div class="input-group">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <label>Daireler</label>
+        <div style="display:flex;gap:8px">
+          <button onclick="topluHepsiniSec()" style="background:#e4f5ec;border:none;border-radius:6px;padding:4px 10px;font-size:12px;color:#0d5c3a;cursor:pointer;font-weight:600">Tümünü Seç</button>
+          <button onclick="topluHepsiniKaldir()" style="background:#fdecea;border:none;border-radius:6px;padding:4px 10px;font-size:12px;color:#c0392b;cursor:pointer;font-weight:600">Temizle</button>
+        </div>
       </div>
-    </div>`).join('');
-}
-
-// RAPOR
-async function loadRapor(){
-  const ay = document.getElementById('raporAySelect').value;
-  const filtered = allIslemler.length ? allIslemler : await sbGet('islemler','limit=500');
-  if(Array.isArray(filtered)) allIslemler = filtered;
-  renderRapor(ay);
-}
-
-function raporAyDegis(){ renderRapor(document.getElementById('raporAySelect').value); }
-
-function renderRapor(ay){
-  const ayIslem = allIslemler.filter(i=>i.donem===ay);
-  const gelirler = ayIslem.filter(i=>i.tip==='Gelir');
-  const giderler = ayIslem.filter(i=>i.tip==='Gider');
-  const topGelir = gelirler.reduce((s,i)=>s+Number(i.tutar),0);
-  const topGider = giderler.reduce((s,i)=>s+Number(i.tutar),0);
-  const net = topGelir - topGider;
-
-  document.getElementById('raporOzet').innerHTML = `
-    <div style="background:var(--success-bg);border-radius:var(--radius-sm);padding:12px">
-      <div style="font-size:10px;color:var(--success);font-weight:600;text-transform:uppercase">Toplam Gelir</div>
-      <div style="font-size:18px;font-weight:700;color:var(--success)">${fmt(topGelir)} ₺</div>
-      <div style="font-size:11px;color:var(--success);opacity:.7">${gelirler.length} işlem</div>
+      <div style="font-size:12px;color:#0d5c3a;font-weight:600;margin-bottom:6px" id="toplu-secim-sayisi">0 daire seçili</div>
+      <div id="toplu-daire-list" style="max-height:220px;overflow-y:auto;border:1px solid #e0e8e2;border-radius:10px;padding:8px 12px"></div>
     </div>
-    <div style="background:var(--danger-bg);border-radius:var(--radius-sm);padding:12px">
-      <div style="font-size:10px;color:var(--danger);font-weight:600;text-transform:uppercase">Toplam Gider</div>
-      <div style="font-size:18px;font-weight:700;color:var(--danger)">${fmt(topGider)} ₺</div>
-      <div style="font-size:11px;color:var(--danger);opacity:.7">${giderler.length} işlem</div>
+    <button class="btn primary" onclick="kaydetTopluGelir()"><i class="ti ti-check"></i> Toplu Kaydet</button>
+    <button class="btn" onclick="closeModal('modal-toplu-gelir')">İptal</button>
+  </div>
+</div>
+
+<!-- GİDER EKLE -->
+<div class="modal-overlay" id="modal-gider">
+  <div class="modal bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title" id="modal-gider-title">Gider Ekle</h2>
+    <div class="alert-info"><i class="ti ti-info-circle"></i> Gider o ayın kasasına otomatik yansır.</div>
+    <div class="input-group"><label>İşlem Tarihi</label><input type="date" id="gid-tarih"></div>
+    <div class="input-group"><label>Dönem</label>
+      <select id="gid-donem"><option>OCAK</option><option>ŞUBAT</option><option>MART</option><option>NİSAN</option><option>MAYIS</option><option>HAZİRAN</option><option>TEMMUZ</option><option>AĞUSTOS</option><option>EYLÜL</option><option>EKİM</option><option>KASIM</option><option>ARALIK</option></select>
     </div>
-    <div style="background:var(--info-bg);border-radius:var(--radius-sm);padding:12px;grid-column:1/-1">
-      <div style="font-size:10px;color:var(--info);font-weight:600;text-transform:uppercase">Net</div>
-      <div style="font-size:20px;font-weight:700;color:${net>=0?'var(--success)':'var(--danger)'}">${net>=0?'+':''}${fmt(net)} ₺</div>
-    </div>`;
+    <div class="input-group"><label>Muhattap / Firma</label><input type="text" id="gid-muhatap" placeholder="Ödeme yapılan kişi veya şirket"></div>
+    <div class="input-group"><label>Tutar (₺)</label><input type="number" id="gid-tutar" placeholder="0.00"></div>
+    <div class="input-group"><label>Kategori</label>
+      <select id="gid-kategori">
+        <optgroup label="PERSONEL GİDERLERİ">
+          <option>Maaş / Avans / İkramiye vs.</option>
+          <option>Diğer Muhtelif İşçilik Giderleri</option>
+          <option>Ek Hizmetler (Havuz Bakım vs.)</option>
+        </optgroup>
+        <optgroup label="ORTAK ALAN GİDERLERİ">
+          <option>Elektrik (Enerjisa)</option>
+          <option>Su (Meski)</option>
+          <option>İnternet</option>
+          <option>Diğer Ortak Alan Giderleri (Havuz İlaçlama vs.)</option>
+        </optgroup>
+        <optgroup label="YÖNETİM GİDERLERİ">
+          <option>Muhasebe Giderleri</option>
+          <option>Avukatlık Giderleri</option>
+          <option>Aylık Vergiler (SGK, Muhtasar, Damga Vergisi vs.)</option>
+          <option>Diğer Yönetim Giderleri (Noter, Banka Masrafı, Kırtasiye vs.)</option>
+        </optgroup>
+        <optgroup label="TEKNİK HİZMET GİDERLERİ">
+          <option>Jeneratör Tamir, Bakım Giderleri</option>
+          <option>Asansör Tamir, Bakım Giderleri</option>
+          <option>Diğer Çeşitli Hizmet Giderleri</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="input-group"><label>Not</label><input type="text" id="gid-aciklama" placeholder="Açıklama (isteğe bağlı)"></div>
+    <button class="btn primary" id="gider-kaydet-btn" onclick="kaydetGider()"><i class="ti ti-check"></i> Kaydet</button>
+    <button class="btn" onclick="closeModal('modal-gider');resetGiderForm()">İptal</button>
+  </div>
+</div>
 
-  const el = document.getElementById('raporListesi');
-  if(!ayIslem.length){ el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:12px 0;text-align:center">Bu ay için işlem bulunamadı.</div>'; return; }
+<!-- HİZMET SAĞLAYICI -->
+<div class="modal-overlay" id="modal-hs-ekle">
+  <div class="modal bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">Hizmet Sağlayıcı Ekle</h2>
+    <div class="input-group"><label>Firma / Kişi Adı</label><input type="text" id="hs-ad" placeholder="Adı giriniz"></div>
+    <div class="input-group"><label>Kategori</label>
+      <select id="hs-kategori">
+        <option>Temizlik</option><option>Güvenlik</option><option>Elektrik</option>
+        <option>Su / Tesisat</option><option>Asansör Bakım</option><option>Jeneratör Bakım</option>
+        <option>Havuz Bakım</option><option>Bahçe</option><option>Muhasebe</option>
+        <option>Avukatlık</option><option>Diğer</option>
+      </select>
+    </div>
+    <div class="input-group"><label>Telefon</label><input type="tel" id="hs-tel" placeholder="05XX XXX XX XX"></div>
+    <div class="input-group"><label>IBAN</label><input type="text" id="hs-iban" placeholder="TR00 0000..."></div>
+    <div class="input-group"><label>Aylık Tutar (₺)</label><input type="number" id="hs-tutar" placeholder="0.00"></div>
+    <div class="input-group"><label>Not</label><input type="text" id="hs-not" placeholder="Açıklama"></div>
+    <button class="btn primary" onclick="hizmetSaglayiciEkle()"><i class="ti ti-check"></i> Kaydet</button>
+    <button class="btn" onclick="closeModal('modal-hs-ekle')">İptal</button>
+  </div>
+</div>
 
-  const gelirHTML = gelirler.length ? `
-    <div style="font-size:12px;font-weight:600;color:var(--success);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.4px">Gelirler</div>
-    ${gelirler.map(i=>`<div class="islem-row">
-      <div class="islem-av g">G</div>
-      <div class="islem-info"><div class="islem-kisi">${i.kisi}</div><div class="islem-meta">${i.tarih||''} · ${i.aciklama||''}</div></div>
-      <div class="islem-tutar" style="color:var(--success)">+${fmt(i.tutar)}</div>
-    </div>`).join('')}` : '';
+<div class="modal-overlay" id="modal-hs-ekstre"><div class="modal bottom-sheet" id="modal-hs-ekstre-inner"></div></div>
 
-  const giderHTML = giderler.length ? `
-    <div style="font-size:12px;font-weight:600;color:var(--danger);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.4px">Giderler</div>
-    ${giderler.map(i=>`<div class="islem-row">
-      <div class="islem-av e">G</div>
-      <div class="islem-info"><div class="islem-kisi">${i.kisi}</div><div class="islem-meta">${i.tarih||''} · ${i.aciklama||''}</div></div>
-      <div class="islem-tutar" style="color:var(--danger)">-${fmt(i.tutar)}</div>
-    </div>`).join('')}` : '';
+<!-- DAİRE DÜZENLE -->
+<div class="modal-overlay" id="modal-daire-duzenle">
+  <div class="modal bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title"><span id="du-no">Daire</span> — Bilgi Güncelle</h2>
+    <div class="input-group"><label>Daire Sakini</label><input type="text" id="du-sakin" placeholder="Ad Soyad"></div>
+    <div class="input-group"><label>Sakin Telefonu</label><input type="tel" id="du-sakintl"></div>
+    <div class="input-group"><label>Kat Maliki</label><input type="text" id="du-malik" placeholder="Ad Soyad"></div>
+    <div class="input-group"><label>Malik Telefonu</label><input type="tel" id="du-maliktl"></div>
+    <div class="input-group"><label>Kullanım Durumu</label>
+      <select id="du-durum"><option value="">Belirtilmemiş</option><option value="EV SAHİBİ">Ev Sahibi</option><option value="KİRACI">Kiracı</option></select>
+    </div>
+    <button class="btn primary" id="du-kaydet-btn"><i class="ti ti-check"></i> Güncelle</button>
+    <button class="btn" onclick="closeModal('modal-daire-duzenle')">İptal</button>
+  </div>
+</div>
 
-  el.innerHTML = gelirHTML + giderHTML;
-}
+<!-- EK BORÇ MODAL -->
+<div class="modal-overlay" id="modal-eb">
+  <div class="modal bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">Ek Borç Ekle</h2>
+    <div class="alert-info"><i class="ti ti-info-circle"></i> Seçilen aylarda dairelere ek borç yükler. Örn: Havuz bakım, asansör, özel gider.</div>
+    <div class="input-group">
+      <label>Açıklama / Borç Nedeni</label>
+      <input type="text" id="eb-aciklama" placeholder="Örn: Havuz Bakım Bedeli, Asansör Bakım...">
+    </div>
+    <div class="input-group">
+      <label>Kişi Başı Tutar (₺)</label>
+      <input type="number" id="eb-tutar" placeholder="0.00">
+    </div>
+    <div class="input-group">
+      <label>Ay Seçin (birden fazla seçebilirsiniz)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="OCAK"> Ocak</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="ŞUBAT"> Şubat</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="MART"> Mart</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="NİSAN"> Nisan</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="MAYIS"> Mayıs</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="HAZİRAN"> Haziran</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="TEMMUZ"> Temmuz</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="AĞUSTOS"> Ağustos</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="EYLÜL"> Eylül</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="EKİM"> Ekim</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="KASIM"> Kasım</label>
+        <label class="toplu-ay-label"><input type="checkbox" class="eb-ay-cb" value="ARALIK"> Aralık</label>
+      </div>
+    </div>
+    <div class="input-group">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="eb-tum" onchange="ebTumDegistir()" style="width:18px;height:18px;accent-color:#0d5c3a">
+        <span>Tüm Dairelere Uygula (58 daire)</span>
+      </label>
+    </div>
+    <div id="eb-daire-secim">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <label style="font-size:12px;font-weight:600;color:#555">Veya Daire Seçin</label>
+        <div style="display:flex;gap:8px">
+          <button onclick="ebDaireTumSec()" style="background:#e4f5ec;border:none;border-radius:6px;padding:4px 10px;font-size:12px;color:#0d5c3a;cursor:pointer;font-weight:600">Tümü</button>
+          <button onclick="ebDaireTemizle()" style="background:#fdecea;border:none;border-radius:6px;padding:4px 10px;font-size:12px;color:#c0392b;cursor:pointer;font-weight:600">Temizle</button>
+        </div>
+      </div>
+      <div id="eb-daire-list" style="max-height:180px;overflow-y:auto;border:1px solid #e0e8e2;border-radius:10px;padding:8px 12px"></div>
+    </div>
+    <button class="btn primary" onclick="kaydetEkBorc()" style="margin-top:12px"><i class="ti ti-check"></i> Borçlandır</button>
+    <button class="btn" onclick="closeModal('modal-eb')">İptal</button>
+  </div>
+</div>
 
-// RAPOR PDF
-function raporPdfIndir(){
-  const ay = document.getElementById('raporAySelect').value;
-  const ayIdx = AY_KEYS.indexOf(ay);
-  const ayAd = ayIdx>=0 ? AY_NAMES[ayIdx] : ay;
-  const ayIslem = allIslemler.filter(i=>i.donem===ay);
-  const gelirler = ayIslem.filter(i=>i.tip==='Gelir');
-  const giderler = ayIslem.filter(i=>i.tip==='Gider');
-  const topGelir = gelirler.reduce((s,i)=>s+Number(i.tutar),0);
-  const topGider = giderler.reduce((s,i)=>s+Number(i.tutar),0);
-  const net = topGelir - topGider;
+<!-- ÖZLÜK DÜZENLE -->
+<div class="modal-overlay" id="modal-ozluk">
+  <div class="modal bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">Personel Özlük Bilgileri</h2>
+    <div class="section-title" style="margin-bottom:10px">Kişisel Bilgiler</div>
+    <div class="input-group"><label>Ad Soyad</label><input type="text" id="oz-adsoyad"></div>
+    <div class="input-group"><label>TC Kimlik No</label><input type="text" id="oz-tc" maxlength="11"></div>
+    <div class="input-group"><label>Doğum Tarihi</label><input type="date" id="oz-dogum"></div>
+    <div class="input-group"><label>Telefon</label><input type="tel" id="oz-tel"></div>
+    <div class="input-group"><label>Adres</label><input type="text" id="oz-adres"></div>
+    <div class="input-group"><label>E-posta</label><input type="email" id="oz-eposta"></div>
+    <div class="section-title" style="margin:14px 0 10px">İş Bilgileri</div>
+    <div class="input-group"><label>Görev / Unvan</label><input type="text" id="oz-unvan"></div>
+    <div class="input-group"><label>İşe Giriş Tarihi</label><input type="date" id="oz-giris"></div>
+    <div class="input-group"><label>Çalışma Saatleri</label><input type="text" id="oz-saat" placeholder="08:00 - 17:00"></div>
+    <div class="input-group"><label>Net Maaş (₺)</label><input type="number" id="oz-maas"></div>
+    <div class="input-group"><label>Brüt Maaş (₺)</label><input type="number" id="oz-maas-brut"></div>
+    <div class="section-title" style="margin:14px 0 10px">Banka / SGK</div>
+    <div class="input-group"><label>Banka Adı</label><input type="text" id="oz-banka"></div>
+    <div class="input-group"><label>IBAN</label><input type="text" id="oz-iban" maxlength="32"></div>
+    <div class="input-group"><label>SGK Sicil No</label><input type="text" id="oz-sgk"></div>
+    <div class="input-group"><label>Sigorta Türü</label>
+      <select id="oz-sigorta"><option>4/a (SSK)</option><option>4/b (Bağ-Kur)</option><option>4/c (Emekli Sandığı)</option><option>Yok</option></select>
+    </div>
+    <div class="input-group"><label>Sağlık Sigortası</label><input type="text" id="oz-saglik"></div>
+    <div class="section-title" style="margin:14px 0 10px">Acil İletişim</div>
+    <div class="input-group"><label>Acil Kişi</label><input type="text" id="oz-acil"></div>
+    <div class="input-group"><label>Acil Telefon</label><input type="tel" id="oz-acil-tel"></div>
+    <div class="input-group"><label>Notlar</label><input type="text" id="oz-notlar"></div>
+    <button class="btn primary" onclick="ozlukKaydet()"><i class="ti ti-check"></i> Kaydet</button>
+    <button class="btn" onclick="closeModal('modal-ozluk')">İptal</button>
+  </div>
+</div>
 
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+<div class="modal-overlay" id="modal-daire"><div class="modal bottom-sheet" id="modal-daire-inner"></div></div>
+<div class="modal-overlay" id="modal-ekstre"><div class="modal bottom-sheet" id="modal-ekstre-inner"></div></div>
+<div id="toast" class="toast"></div>
 
-  // Header
-  doc.setFillColor(26,58,92);
-  doc.rect(0,0,210,42,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(20);doc.setFont(undefined,'bold');
-  doc.text('SİTE YÖNETİM PANELİ',105,14,{align:'center'});
-  doc.setFontSize(14);doc.setFont(undefined,'normal');
-  doc.text(ayAd+' 2026 · Gelir/Gider Raporu',105,23,{align:'center'});
-  doc.setFontSize(10);
-  doc.text('Oluşturma: '+new Date().toLocaleDateString('tr-TR')+' · Hazırlayan: '+(cu?cu.name:'—'),105,32,{align:'center'});
-
-  // Özet kartlar
-  doc.setFillColor(232,247,241);
-  doc.roundedRect(14,48,55,20,2,2,'F');
-  doc.setTextColor(26,127,90);doc.setFontSize(8);doc.setFont(undefined,'bold');
-  doc.text('TOPLAM GELİR',41,55,{align:'center'});
-  doc.setFontSize(13);
-  doc.text(fmt(topGelir)+' ₺',41,63,{align:'center'});
-
-  doc.setFillColor(253,240,239);
-  doc.roundedRect(77,48,55,20,2,2,'F');
-  doc.setTextColor(192,57,43);doc.setFontSize(8);doc.setFont(undefined,'bold');
-  doc.text('TOPLAM GİDER',104,55,{align:'center'});
-  doc.setFontSize(13);
-  doc.text(fmt(topGider)+' ₺',104,63,{align:'center'});
-
-  doc.setFillColor(net>=0?232:253,net>=0?247:240,net>=0?241:239);
-  doc.roundedRect(140,48,55,20,2,2,'F');
-  doc.setTextColor(net>=0?26:192,net>=0?127:57,net>=0?90:43);doc.setFontSize(8);doc.setFont(undefined,'bold');
-  doc.text('NET DURUM',167,55,{align:'center'});
-  doc.setFontSize(13);
-  doc.text((net>=0?'+':'')+fmt(net)+' ₺',167,63,{align:'center'});
-
-  let y = 76;
-  const drawTable = (title, rows, color) => {
-    if(!rows.length) return;
-    doc.setFontSize(12);doc.setFont(undefined,'bold');
-    doc.setTextColor(color[0],color[1],color[2]);
-    doc.text(title,15,y);
-    y+=5;
-    // header
-    doc.setFillColor(color[0],color[1],color[2]);
-    doc.rect(15,y,180,7,'F');
-    doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont(undefined,'bold');
-    doc.text('Tarih',17,y+5);
-    doc.text('Muhatap/Daire',45,y+5);
-    doc.text('Açıklama',105,y+5);
-    doc.text('Tutar',185,y+5,{align:'right'});
-    y+=7;
-    rows.forEach((i,idx)=>{
-      if(y>265){doc.addPage();y=20;}
-      doc.setFillColor(idx%2===0?255:247,idx%2===0?255:249,idx%2===0?255:252);
-      doc.rect(15,y,180,7,'F');
-      doc.setTextColor(26,35,50);doc.setFontSize(8);doc.setFont(undefined,'normal');
-      doc.text(String(i.tarih||''),17,y+5);
-      doc.text(String(i.kisi||'').substring(0,28),45,y+5);
-      doc.text(String(i.aciklama||'').substring(0,25),105,y+5);
-      doc.setFont(undefined,'bold');
-      doc.text(fmt(i.tutar)+' ₺',185,y+5,{align:'right'});
-      y+=7;
-    });
-    // toplam satırı
-    doc.setFillColor(color[0],color[1],color[2]);
-    doc.rect(15,y,180,8,'F');
-    doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont(undefined,'bold');
-    doc.text('TOPLAM',17,y+5.5);
-    doc.text(fmt(rows.reduce((s,i)=>s+Number(i.tutar),0))+' ₺',185,y+5.5,{align:'right'});
-    y+=14;
-  };
-
-  drawTable('GELİRLER', gelirler, [26,127,90]);
-  drawTable('GİDERLER', giderler, [192,57,43]);
-
-  // footer
-  doc.setTextColor(144,152,168);doc.setFontSize(8);doc.setFont(undefined,'normal');
-  doc.text('Bu rapor Site Yönetim Paneli tarafından otomatik oluşturulmuştur.',105,285,{align:'center'});
-
-  doc.save(`${ayAd}_2026_Rapor.pdf`);
-}
-
-// EKSTRE PDF
-function ekstrePdf(){
-  const s = selectedSakin;
-  const sakinIslemler = allIslemler.filter(i=>i.kisi&&i.kisi.includes('D.'+s.no));
-  const gelirler = sakinIslemler.filter(i=>i.tip==='Gelir');
-  const toplamTahsilat = gelirler.reduce((sum,i)=>sum+Number(i.tutar),0);
-  const yillikBorc = AY_KEYS.length*AIDAT;
-  const bakiye = yillikBorc - toplamTahsilat;
-  const odenenAylar = new Set(gelirler.filter(i=>i.aciklama==='Aidat Tahsilatı').map(i=>i.donem));
-
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-
-  doc.setFillColor(26,58,92);
-  doc.rect(0,0,210,42,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(18);doc.setFont(undefined,'bold');
-  doc.text('SİTE YÖNETİM PANELİ',105,13,{align:'center'});
-  doc.setFontSize(13);doc.setFont(undefined,'normal');
-  doc.text('Aidat Ekstresi · 2026',105,22,{align:'center'});
-  doc.setFontSize(10);
-  doc.text('Oluşturma: '+new Date().toLocaleDateString('tr-TR'),105,31,{align:'center'});
-
-  doc.setTextColor(26,58,92);
-  doc.setFontSize(14);doc.setFont(undefined,'bold');
-  doc.text('Daire '+s.no+' — '+s.ad,15,52);
-  doc.setFontSize(10);doc.setFont(undefined,'normal');doc.setTextColor(90,106,126);
-  doc.text('Kat: '+s.kat+'   Statü: '+(s.tip==='kiraci'?'Kiracı':'Ev Sahibi'),15,59);
-
-  const stats=[['Yıllık Borç',fmt(yillikBorc)+' ₺'],['Tahsilat',fmt(toplamTahsilat)+' ₺'],['Bakiye',bakiye>0?fmt(bakiye)+' ₺':'Borç Yok']];
-  stats.forEach(([lbl,val],i)=>{
-    const x=15+i*63;
-    doc.setFillColor(240,244,248);doc.roundedRect(x,64,58,18,2,2,'F');
-    doc.setTextColor(90,106,126);doc.setFontSize(8);doc.setFont(undefined,'normal');
-    doc.text(lbl,x+29,70,{align:'center'});
-    doc.setTextColor(26,58,92);doc.setFontSize(11);doc.setFont(undefined,'bold');
-    doc.text(val,x+29,77,{align:'center'});
-  });
-
-  doc.setTextColor(26,58,92);doc.setFontSize(11);doc.setFont(undefined,'bold');
-  doc.text('Aylık Döküm',15,92);
-
-  const hdrs=['Ay','Aidat Borcu','Tahsilat','Durum'];
-  const ws=[30,50,50,45];
-  let y=97;
-  doc.setFillColor(26,58,92);doc.rect(15,y,180,8,'F');
-  doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont(undefined,'bold');
-  let cx=15;hdrs.forEach((h,i)=>{doc.text(h,cx+2,y+5.5);cx+=ws[i];});
-  y+=8;
-  AY_KEYS.forEach((ay,i)=>{
-    const odendi=odenenAylar.has(ay);
-    const ayGelir=gelirler.filter(x=>x.donem===ay).reduce((s,x)=>s+Number(x.tutar),0);
-    doc.setFillColor(i%2===0?255:247,i%2===0?255:249,i%2===0?255:252);
-    doc.rect(15,y,180,8,'F');
-    doc.setTextColor(26,58,92);doc.setFontSize(9);doc.setFont(undefined,'normal');
-    cx=15;
-    [AY_NAMES[i],fmt(AIDAT)+' ₺',ayGelir?fmt(ayGelir)+' ₺':'—',odendi?'Ödendi':'Bekliyor'].forEach((cell,ci)=>{
-      if(ci===3)doc.setTextColor(odendi?26:192,odendi?127:57,odendi?90:43);
-      doc.text(cell,cx+2,y+5.5);
-      doc.setTextColor(26,58,92);cx+=ws[ci];
-    });
-    y+=8;
-  });
-
-  doc.setFillColor(26,58,92);
-  doc.roundedRect(15,y+4,180,12,2,2,'F');
-  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont(undefined,'bold');
-  doc.text('BAKİYE BORÇ:',20,y+11.5);
-  doc.setTextColor(232,184,75);
-  doc.text(bakiye>0?fmt(bakiye)+' ₺':'BORÇ YOK',193,y+11.5,{align:'right'});
-
-  doc.setTextColor(144,152,168);doc.setFontSize(8);doc.setFont(undefined,'normal');
-  doc.text('Bu ekstre Site Yönetim Paneli tarafından otomatik oluşturulmuştur.',105,282,{align:'center'});
-
-  doc.save('Daire_'+s.no+'_'+s.ad+'_Ekstre_2026.pdf');
-}
-</script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
