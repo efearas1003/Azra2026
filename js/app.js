@@ -20,6 +20,81 @@ const AYLAR = ['OCAK','ŞUBAT','MART','NİSAN','MAYIS','HAZİRAN','TEMMUZ','AĞU
 const AIDAT = 1400, DIGER_BORC = 1600, YILLIK_AIDAT = 8400;
 const BUGUN_AY = AYLAR[new Date().getMonth()];
 
+// Her dairenin Ocak-Haziran dönemi başlangıç borcu (tabloya göre)
+// Boş aylar = o ay borçlandırılmamış (kiracı yok, muaf vs.)
+const DAIRE_BASLANGIC_BORC = {
+   1:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+   2:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:1600},
+   3:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+   4:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+   5:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+   6:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:1400,HAZİRAN:3000},
+   7:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+   8:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+   9:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  10:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  11:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  12:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  13:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:1600},
+  14:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:1400,HAZİRAN:3000},
+  15:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  16:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  17:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  18:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  19:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  20:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:1400,MAYIS:1400,HAZİRAN:3000},
+  21:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  22:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  23:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  24:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  25:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  26:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:1600},
+  27:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  28:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  29:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  30:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  31:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  32:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:1400,HAZİRAN:3000},
+  33:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  34:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  35:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:1400,HAZİRAN:3000},
+  36:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  37:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  38:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  39:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  40:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  41:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  42:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  43:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:1600},
+  44:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  45:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  46:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:1600},
+  47:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  48:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  49:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:1400,HAZİRAN:3000},
+  50:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  51:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  52:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:1400,HAZİRAN:3000},
+  53:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  54:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  55:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:0},
+  56:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  57:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+  58:{OCAK:0,ŞUBAT:0,MART:0,NİSAN:0,MAYIS:0,HAZİRAN:3000},
+};
+
+// Dairenin toplam başlangıç borcunu hesapla (tüm aylar toplamı)
+const getDaireBaslangicBorc=no=>{
+  const aylar=DAIRE_BASLANGIC_BORC[no];
+  if(!aylar)return 0;
+  return Object.values(aylar).reduce((a,b)=>a+b,0);
+};
+
+// Gelecekte yeni ay borçlandırması dinamik eklenince kullanılacak
+const getDaireDinamikBorc=no=>{
+  return ekBorclar.filter(b=>(b.daireNo===no||b.tumDaireler)&&b.dinamik).reduce((a,b)=>a+b.tutar,0);
+};
+
 const GIDER_KATEGORILER = [
   { grup:'PERSONEL GİDERLERİ', renk:'#c0392b', kalemler:[
     'Maaş / Avans / İkramiye vs.',
@@ -118,7 +193,7 @@ const DAIRELER = [
 
 let daireOverrides={}, hizmetSaglayicilar=[], ekBorclar=[];
 let state={
-  user:null,gelirler:[],giderler:[],puantaj:{},
+  user:null,gelirler:[],giderler:[],puantaj:{},fazlaMesai:{},
   kasaOnceki:[
     {ay:'OCAK',acilis:0,gelir:81200,gider:81200,devreden:0},
     {ay:'ŞUBAT',acilis:0,gelir:79800,gider:79800,devreden:0},
@@ -146,11 +221,31 @@ const fmtPara=v=>v?parseFloat(v).toLocaleString('tr-TR',{minimumFractionDigits:2
 const getDaire=no=>{const base=DAIRELER.find(x=>x.no===no);return{...base,...(daireOverrides[no]||{})};};
 const getDaireTahsilat=no=>state.gelirler.filter(g=>g.daireNo===no).reduce((a,b)=>a+b.tutar,0);
 const getDaireEkBorc=no=>{
-  return ekBorclar.filter(b=>b.daireNo===no||b.tumDaireler).reduce((a,b)=>a+b.tutar,0);
+  return ekBorclar.filter(b=>(b.daireNo===no||b.tumDaireler)&&!b.dinamik).reduce((a,b)=>a+b.tutar,0);
 };
-const getDaireBakiyeBorc=no=>(YILLIK_AIDAT+DIGER_BORC+getDaireEkBorc(no))-getDaireTahsilat(no);
-const getAyTahsilat=ay=>state.gelirler.filter(g=>g.donem===ay).reduce((a,b)=>a+b.tutar,0);
-const getAyGider=ay=>state.giderler.filter(g=>g.donem===ay).reduce((a,b)=>a+b.tutar,0);
+// Daire bakiye borcu: başlangıç borcu + ek borçlar - tahsilatlar
+const getDaireBakiyeBorc=no=>(getDaireBaslangicBorc(no)+getDaireEkBorc(no)+getDaireDinamikBorc(no))-getDaireTahsilat(no);
+// Tahsilat: o ay içinde gerçekleşen (tarih ayı esas), Gelirler listesi için dönem bazlı borç düşümü ayrı
+const getAyTahsilat=ay=>{
+  // Önce o ay içinde tahsil edilen tüm gelirleri topla (tarih ayı = ay)
+  const ayIndex=AYLAR.indexOf(ay);
+  return state.gelirler.filter(g=>{
+    if(!g.tarih)return g.donem===ay;
+    const parts=g.tarih.split('.');
+    if(parts.length===3){const gAy=new Date(parseInt(parts[2]),parseInt(parts[1])-1,1).getMonth();return gAy===ayIndex;}
+    return g.donem===ay;
+  }).reduce((a,b)=>a+b.tutar,0);
+};
+// Gider: ödeme yapılan tarih ayı esas
+const getAyGider=ay=>{
+  const ayIndex=AYLAR.indexOf(ay);
+  return state.giderler.filter(g=>{
+    if(!g.tarih)return g.donem===ay;
+    const parts=g.tarih.split('.');
+    if(parts.length===3){const gAy=new Date(parseInt(parts[2]),parseInt(parts[1])-1,1).getMonth();return gAy===ayIndex;}
+    return g.donem===ay;
+  }).reduce((a,b)=>a+b.tutar,0);
+};
 const getKasaBakiye=()=>{
   // Mayıs sonu devreden + Haziran gelir - Haziran gider
   const mayisDevreden=11589.79;
@@ -185,12 +280,37 @@ window.doLogin=()=>{
     document.getElementById('screen-main').classList.add('active');
     document.getElementById('topbar-badge').textContent=isAdmin()?'Yönetici':'İzleyici';
     document.getElementById('fab').style.display=isAdmin()?'flex':'none';
+    // İzleyici: sadece Ana Sayfa ve Daireler görünsün
+    document.querySelectorAll('.admin-only').forEach(el=>{
+      el.style.display=isAdmin()?'flex':'none';
+    });
     initDaireSelect();setDefaultDates();startFirebaseListeners();loadOzluk();
   }else{e.style.display='block';}
 };
+// =====================================================
+// ŞİFRE DEĞİŞTİRME
+// =====================================================
+window.sifreDegistir=()=>{
+  const mevcutSifre=document.getElementById('sd-mevcut').value;
+  const yeniSifre=document.getElementById('sd-yeni').value;
+  const yeniSifreTekrar=document.getElementById('sd-tekrar').value;
+  const errEl=document.getElementById('sd-error');
+  const u=state.user.username;
+  if(USERS[u].sifre!==mevcutSifre){errEl.textContent='Mevcut şifre yanlış!';errEl.style.display='block';return;}
+  if(yeniSifre.length<6){errEl.textContent='Yeni şifre en az 6 karakter olmalı!';errEl.style.display='block';return;}
+  if(yeniSifre!==yeniSifreTekrar){errEl.textContent='Yeni şifreler eşleşmiyor!';errEl.style.display='block';return;}
+  USERS[u].sifre=yeniSifre;
+  errEl.style.display='none';
+  document.getElementById('sd-mevcut').value='';
+  document.getElementById('sd-yeni').value='';
+  document.getElementById('sd-tekrar').value='';
+  closeModal('modal-sifre');
+  showToast('✓ Şifre değiştirildi');
+};
+
 window.doLogout=()=>{
   [state.unsubGelir,state.unsubGider,state.unsubPuantaj].forEach(u=>u&&u());
-  state.user=null;state.gelirler=[];state.giderler=[];state.puantaj={};
+  state.user=null;state.gelirler=[];state.giderler=[];state.puantaj={};state.fazlaMesai={};
   document.getElementById('screen-main').classList.remove('active');
   document.getElementById('screen-login').classList.add('active');
   document.getElementById('inp-user').value='';document.getElementById('inp-pass').value='';
@@ -232,7 +352,8 @@ function startFirebaseListeners(){
         renderAll();
       }
     );
-    state.unsubPuantaj=onSnapshot(doc(db,'puantaj','2026'),s=>{state.puantaj=s.exists()?s.data():{};renderPuantaj();},()=>{renderPuantaj();});
+    state.unsubPuantaj=onSnapshot(doc(db,'puantaj','2026'),s=>{state.puantaj=s.exists()?s.data():{};renderPuantaj();renderFazlaMesai();},()=>{renderPuantaj();renderFazlaMesai();});
+    onSnapshot(doc(db,'fazlamesai','2026'),s=>{state.fazlaMesai=s.exists()?s.data():{};renderFazlaMesai();},()=>{renderFazlaMesai();});
     onSnapshot(doc(db,'daireler','overrides'),s=>{if(s.exists())daireOverrides=s.data();renderDaireler();},()=>{});
     onSnapshot(doc(db,'hizmet','saglayicilar'),s=>{if(s.exists())hizmetSaglayicilar=s.data().liste||[];renderHizmetSaglayicilar();},()=>{});
     onSnapshot(doc(db,'ekborclar','liste'),s=>{if(s.exists())ekBorclar=s.data().liste||[];renderAll();},()=>{});
@@ -359,7 +480,8 @@ window.kaydetTopluGelir=async()=>{
 window.kaydetGider=async()=>{
   if(!isAdmin())return showToast('Yalnızca yönetici veri girebilir.');
   const tarih=document.getElementById('gid-tarih').value;
-  const donem=document.getElementById('gid-donem').value;
+  // Dönem artık tarihten otomatik belirlenir
+  const donem=tarihtenDonem(tarih);
   const muhatap=document.getElementById('gid-muhatap').value.trim();
   const tutar=parseFloat(document.getElementById('gid-tutar').value);
   const kategori=document.getElementById('gid-kategori').value;
@@ -372,7 +494,7 @@ window.kaydetGider=async()=>{
 };
 
 function resetGelirForm(){document.getElementById('g-daire').value='';document.getElementById('g-tur').value='aidat';document.getElementById('g-tutar').value='';document.getElementById('g-not').value='';document.getElementById('g-tutar-group').style.display='none';document.getElementById('g-tarih').value=today();document.getElementById('modal-gelir-title').textContent='Gelir Ekle';document.getElementById('gelir-kaydet-btn').onclick=kaydetGelir;}
-function resetGiderForm(){document.getElementById('gid-muhatap').value='';document.getElementById('gid-tutar').value='';document.getElementById('gid-aciklama').value='';document.getElementById('gid-tarih').value=today();document.getElementById('modal-gider-title').textContent='Gider Ekle';document.getElementById('gider-kaydet-btn').onclick=kaydetGider;}
+function resetGiderForm(){document.getElementById('gid-muhatap').value='';document.getElementById('gid-tutar').value='';document.getElementById('gid-aciklama').value='';document.getElementById('gid-tarih').value=today();document.getElementById('modal-gider-title').textContent='Gider Ekle';document.getElementById('gider-kaydet-btn').onclick=kaydetGider;window.gidTarihtenDonemBelirle&&window.gidTarihtenDonemBelirle();}
 
 // =====================================================
 // SİL / DÜZENLE
@@ -402,7 +524,6 @@ window.duzenleGelir=id=>{
 window.duzenleGider=id=>{
   const g=state.giderler.find(x=>x.id===id);if(!g)return;
   document.getElementById('gid-tarih').value=g.tarih.split('.').reverse().join('-');
-  document.getElementById('gid-donem').value=g.donem;
   document.getElementById('gid-muhatap').value=g.muhatap;
   document.getElementById('gid-tutar').value=g.tutar;
   document.getElementById('gid-kategori').value=g.kategori||'Diğer Çeşitli Hizmet Giderleri';
@@ -410,7 +531,8 @@ window.duzenleGider=id=>{
   document.getElementById('modal-gider-title').textContent='Gider Düzenle';
   document.getElementById('gider-kaydet-btn').onclick=async()=>{
     if(!confirm('Güncellemek istiyor musunuz?'))return;
-    const gn={tarih:document.getElementById('gid-tarih').value.split('-').reverse().join('.'),donem:document.getElementById('gid-donem').value,muhatap:document.getElementById('gid-muhatap').value.trim(),tutar:parseFloat(document.getElementById('gid-tutar').value)||g.tutar,kategori:document.getElementById('gid-kategori').value,aciklama:document.getElementById('gid-aciklama').value||document.getElementById('gid-kategori').value};
+    const yeniTarih=document.getElementById('gid-tarih').value;
+    const gn={tarih:yeniTarih.split('-').reverse().join('.'),donem:tarihtenDonem(yeniTarih),muhatap:document.getElementById('gid-muhatap').value.trim(),tutar:parseFloat(document.getElementById('gid-tutar').value)||g.tutar,kategori:document.getElementById('gid-kategori').value,aciklama:document.getElementById('gid-aciklama').value||document.getElementById('gid-kategori').value};
     try{await updateDoc(doc(db,'giderler',id),gn);}catch(e){const i=state.giderler.findIndex(x=>x.id===id);if(i>=0)state.giderler[i]={...state.giderler[i],...gn};renderAll();}
     closeModal('modal-gider');resetGiderForm();showToast('✓ Güncellendi');
   };
@@ -504,20 +626,20 @@ function renderHizmetSaglayicilar(){
 // =====================================================
 // RENDER ANA
 // =====================================================
-function renderAll(){renderStats();renderSonIslemler();renderDaireler();renderGelirler();renderGiderler();renderKasaOzet();renderRapor();renderPuantaj();renderHizmetSaglayicilar();renderEkBorclar();}
+function renderAll(){renderStats();renderSonIslemler();renderDaireler();renderGelirler();renderGiderler();renderKasaOzet();renderRapor();renderPuantaj();renderFazlaMesai();renderHizmetSaglayicilar();renderEkBorclar();}
 
 function renderStats(){
   const{odendi,bekleyen,pct}=getAyOdemeOrani();
-  // Haziran tahsilatı (sadece bu ay)
+  // Haziran'da tarih bazlı tüm tahsilatlar (geçmiş dönem dahil)
   const hazTahsilat=getAyTahsilat('HAZİRAN');
   document.getElementById('s-tahsilat').textContent=fmt(hazTahsilat);
   document.getElementById('s-ay-label').textContent='HAZİRAN Tahsilat';
-  // Haziran için eksik aidat borcu (58x1400 - haziran aidat tahsilatı)
+  // Haziran için dönem bazlı aidat borcu (sadece HAZİRAN dönemine ait)
   const hazAidatTahsilat=state.gelirler.filter(g=>g.donem==='HAZİRAN'&&g.aciklama==='Aidat Tahsilatı').reduce((a,b)=>a+b.tutar,0);
   const hazBorc=Math.max(0,(58*AIDAT)-hazAidatTahsilat);
   document.getElementById('s-borc').textContent=fmt(hazBorc);
   document.getElementById('s-borc-label').textContent='HAZİRAN Aidat Borcu';
-  // Kasa bakiyesi: Mayıs devredeni + Haziran net
+  // Kasa bakiyesi: Mayıs devredeni + Haziran net (tarih bazlı)
   document.getElementById('s-kasa').textContent=fmt(getKasaBakiye());
   document.getElementById('odeme-progress').style.width=pct+'%';
   document.getElementById('odeme-oran').textContent=pct+'%';
@@ -560,9 +682,13 @@ function renderDaireler(){
     const borclu=borc>0;
     const name=d.sakin||d.malik||'—';
     const durumBadge=d.durum==='KİRACI'?'<span class="badge yellow-badge" style="margin-left:6px">Kiracı</span>':d.durum==='EV SAHİBİ'?'<span class="badge green-badge" style="margin-left:6px">Ev Sahibi</span>':'';
+    const tel=d.sakintl||d.maliktl||'';
     return `<div class="daire-item" onclick="openDaireModal(${d.no})">
       <div class="daire-no-badge ${borclu?'borclu':'odendi'}">${d.no}</div>
-      <div class="daire-info"><div class="daire-name">${name}${durumBadge}</div><div class="daire-sub">Kat ${d.kat} · Tahsilat: ${fmt(tahsilat)}</div></div>
+      <div class="daire-info">
+        <div class="daire-name">${name}${durumBadge}</div>
+        <div class="daire-sub">Kat ${d.kat}${tel?' · <i class="ti ti-phone" style="font-size:11px"></i> '+tel:''}</div>
+      </div>
       <div class="daire-amount ${borclu?'borclu':'odendi'}">${borclu?fmt(borc):'✓ Tamam'}</div>
       <i class="ti ti-chevron-right" style="color:#ccc;font-size:16px"></i>
     </div>`;
@@ -717,21 +843,32 @@ function indir_html(html, dosyaAdi){
   showToast('✓ '+dosyaAdi+' indirildi (HTML → tarayıcıda aç → Yazdır → PDF kaydet)');
 }
 
+// Tarih string'ini karşılaştırılabilir değere çevir (GG.AA.YYYY → YYYY-AA-GG)
+function tarihSirala(tarih){
+  if(!tarih)return '0000-00-00';
+  const p=tarih.split('.');
+  if(p.length===3)return p[2]+'-'+p[1]+'-'+p[0];
+  return tarih;
+}
+
 // GELİRLER LİSTESİ
 function renderGelirler(){
   const el=document.getElementById('gelir-list');
   let list=[...state.gelirler];
   if(state.gelirFiltre!=='hepsi'){
-    // Ay filtrelenince: daire no sırasına göre
-    list=list.filter(g=>g.donem===state.gelirFiltre).sort((a,b)=>a.daireNo-b.daireNo);
-  } else {
-    // Hepsi: önce dönem (ay sırası), sonra daire no
-    list=list.sort((a,b)=>{
-      const ayFark=AYLAR.indexOf(a.donem)-AYLAR.indexOf(b.donem);
-      if(ayFark!==0)return ayFark;
-      return a.daireNo-b.daireNo;
-    });
+    list=list.filter(g=>g.donem===state.gelirFiltre);
   }
+  // Yeniden eskiye tarihe göre sırala
+  list=list.sort((a,b)=>tarihSirala(b.tarih).localeCompare(tarihSirala(a.tarih))||a.daireNo-b.daireNo);
+
+  const toplam=list.reduce((a,b)=>a+b.tutar,0);
+  const toplamBar=document.getElementById('gelir-toplam-bar');
+  const toplamTutar=document.getElementById('gelir-toplam-tutar');
+  if(toplamBar&&toplamTutar){
+    toplamBar.style.display=list.length?'flex':'none';
+    toplamTutar.textContent=fmt(toplam);
+  }
+
   if(!list.length){el.innerHTML='<div class="empty-state"><i class="ti ti-trending-up"></i><p>Kayıt bulunamadı</p></div>';return;}
   el.innerHTML=`<div id="gelir-top"></div>`+list.map(g=>`
     <div class="tx-row">
@@ -750,14 +887,19 @@ function renderGiderler(){
   const el=document.getElementById('gider-list');
   let list=[...state.giderler];
   if(state.giderFiltre!=='hepsi'){
-    list=list.filter(g=>g.donem===state.giderFiltre).sort((a,b)=>AYLAR.indexOf(a.donem)-AYLAR.indexOf(b.donem));
-  } else {
-    list=list.sort((a,b)=>{
-      const ayFark=AYLAR.indexOf(a.donem)-AYLAR.indexOf(b.donem);
-      if(ayFark!==0)return ayFark;
-      return (a.tarih||'').localeCompare(b.tarih||'');
-    });
+    list=list.filter(g=>g.donem===state.giderFiltre);
   }
+  // Yeniden eskiye tarihe göre sırala
+  list=list.sort((a,b)=>tarihSirala(b.tarih).localeCompare(tarihSirala(a.tarih)));
+
+  const toplam=list.reduce((a,b)=>a+b.tutar,0);
+  const toplamBar=document.getElementById('gider-toplam-bar');
+  const toplamTutar=document.getElementById('gider-toplam-tutar');
+  if(toplamBar&&toplamTutar){
+    toplamBar.style.display=list.length?'flex':'none';
+    toplamTutar.textContent=fmt(toplam);
+  }
+
   if(!list.length){el.innerHTML='<div class="empty-state"><i class="ti ti-trending-down"></i><p>Kayıt bulunamadı</p></div>';return;}
   el.innerHTML=`<div id="gider-top"></div>`+list.map(g=>`
     <div class="tx-row">
@@ -779,48 +921,52 @@ window.scrollToBottom=p=>document.getElementById(p+'-bottom')?.scrollIntoView({b
 // KASA
 function renderKasaOzet(){
   const el=document.getElementById('kasa-ozet');
-  let h=`<table class="kasa-table"><thead><tr><th>Ay</th><th style="text-align:right">Gelir</th><th style="text-align:right">Gider</th><th style="text-align:right;color:#00bcd4">Kalan</th></tr></thead><tbody>`;
-  state.kasaOnceki.forEach(k=>{
-    const kalanRenk=k.devreden>0?'#00bcd4':k.devreden<0?'#c0392b':'#aaa';
-    h+=`<tr><td>${k.ay}</td><td class="gelir" style="text-align:right">${fmt(k.gelir)}</td><td class="gider" style="text-align:right">${fmt(k.gider)}</td><td style="text-align:right;font-weight:700;color:${kalanRenk}">${k.devreden!==0?fmt(k.devreden):'—'}</td></tr>`;
-  });
-  // Haziran: Firebase'den gelen gelir/gider + Mayıs devredeni
   const hazGelir=getAyTahsilat('HAZİRAN');
   const hazGider=getAyGider('HAZİRAN');
-  const mayisDevreden=11589.79; // Mayıs sonu kasa bakiyesi
+  const mayisDevreden=11589.79;
   const hazKalan=mayisDevreden+hazGelir-hazGider;
-  h+=`<tr class="aktif"><td>HAZİRAN ★</td><td class="gelir" style="text-align:right">${fmt(hazGelir)}</td><td class="gider" style="text-align:right">${fmt(hazGider)}</td><td style="text-align:right;font-weight:800;color:#00bcd4;font-size:14px">${fmt(hazKalan)}</td></tr>`;
-  h+='</tbody></table>';
-  // Alt özet - tüm yıl toplamı
-  const tumGelir=state.gelirler.reduce((a,b)=>a+b.tutar,0);
-  const tumGider=state.giderler.reduce((a,b)=>a+b.tutar,0);
-  const sabitGelir=state.kasaOnceki.reduce((a,b)=>a+b.gelir,0);
-  const sabitGider=state.kasaOnceki.reduce((a,b)=>a+b.gider,0);
-  h+=`<div style="margin-top:14px;border-top:2px solid #e0e0e0;padding-top:12px">
-    <div style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">2026 YILI GENEL ÖZET</div>
-    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f4f1;font-size:13px">
-      <span style="color:#666">Ocak-Mayıs Toplam Gelir</span>
-      <span style="font-weight:700;color:#0d5c3a">${fmt(sabitGelir)}</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f4f1;font-size:13px">
-      <span style="color:#666">Ocak-Mayıs Toplam Gider</span>
-      <span style="font-weight:700;color:#c0392b">${fmt(sabitGider)}</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f4f1;font-size:13px">
-      <span style="color:#666">HAZİRAN Toplam Gelir</span>
-      <span style="font-weight:700;color:#0d5c3a">${fmt(tumGelir)}</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f4f1;font-size:13px">
-      <span style="color:#666">HAZİRAN Toplam Gider</span>
-      <span style="font-weight:700;color:#c0392b">${fmt(tumGider)}</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;padding:10px;background:#e8f4ee;border-radius:8px;margin-top:8px">
-      <span style="font-size:13px;font-weight:700">Güncel Kasa Bakiyesi</span>
-      <span style="font-size:16px;font-weight:800;color:#00bcd4">${fmt(getKasaBakiye())}</span>
-    </div>
-  </div>`;
+
+  // Tüm aylar - sabit + Haziran (Firebase)
+  const tumAylar=[
+    ...state.kasaOnceki.map(k=>({...k,aktif:false})),
+    {ay:'HAZİRAN',gelir:hazGelir,gider:hazGider,devreden:hazKalan,aktif:true}
+  ];
+
+  let h=`<table class="kasa-table" style="width:100%">
+    <thead><tr>
+      <th>Ay</th>
+      <th style="text-align:right">Gelir</th>
+      <th style="text-align:right">Gider</th>
+      <th style="text-align:right;color:#00bcd4">Kalan</th>
+    </tr></thead><tbody>`;
+
+  tumAylar.forEach(k=>{
+    const kr=k.devreden>0?'#00bcd4':k.devreden<0?'#c0392b':'#888';
+    const rowStyle=k.aktif?'background:rgba(0,188,212,0.08);':'';
+    const ayLabel=k.aktif?k.ay+' ★':k.ay;
+    h+=`<tr style="${rowStyle}">
+      <td style="${k.aktif?'font-weight:700;color:#00bcd4':''}font-size:12px">${ayLabel}</td>
+      <td class="gelir" style="text-align:right">${k.gelir>0?fmt(k.gelir):'—'}</td>
+      <td class="gider" style="text-align:right">${k.gider>0?fmt(k.gider):'—'}</td>
+      <td style="text-align:right;font-weight:700;color:${kr}">${k.devreden!==0?fmt(k.devreden):'—'}</td>
+    </tr>`;
+  });
+
+  // Toplam satırı
+  const topGelir=tumAylar.reduce((a,b)=>a+b.gelir,0);
+  const topGider=tumAylar.reduce((a,b)=>a+b.gider,0);
+  h+=`</tbody><tfoot>
+    <tr style="border-top:2px solid #0d5c3a;background:rgba(13,92,58,0.1)">
+      <td style="font-weight:800;font-size:13px;padding-top:8px">TOPLAM</td>
+      <td class="gelir" style="text-align:right;font-weight:800;font-size:13px">${fmt(topGelir)}</td>
+      <td class="gider" style="text-align:right;font-weight:800;font-size:13px">${fmt(topGider)}</td>
+      <td style="text-align:right;font-weight:800;font-size:14px;color:#00bcd4">${fmt(hazKalan)}</td>
+    </tr>
+  </tfoot></table>`;
+
   el.innerHTML=h;
 }
+
 
 // PUANTAJ
 function renderPuantaj(){
@@ -852,7 +998,192 @@ window.puantajHucreTikla=async(gun,mevcutKod)=>{
   renderPuantaj();
   try{await setDoc(doc(db,'puantaj','2026'),state.puantaj);}catch(e){}
 };
-window.puantajAyDegistir=yon=>{state.puantajAy=AYLAR[(AYLAR.indexOf(state.puantajAy)+yon+12)%12];renderPuantaj();};
+window.puantajAyDegistir=yon=>{state.puantajAy=AYLAR[(AYLAR.indexOf(state.puantajAy)+yon+12)%12];renderPuantaj();renderFazlaMesai();};
+
+// =====================================================
+// FAZLA MESAİ
+// =====================================================
+function getFMListesi(){return state.fazlaMesai[state.puantajAy]||[];}
+
+function renderFazlaMesai(){
+  const list=getFMListesi();
+  const el=document.getElementById('fm-list');
+  const ozet=document.getElementById('fm-ozet');
+  if(!el)return;
+  if(!list.length){
+    el.innerHTML='<div class="empty-state" style="padding:20px 0"><i class="ti ti-clock" style="font-size:28px;color:#ccc"></i><p style="color:#bbb;font-size:12px;margin-top:6px">Fazla mesai kaydı yok</p></div>';
+    if(ozet)ozet.style.display='none';
+    return;
+  }
+  let topSaat=0,topUcret=0;
+  el.innerHTML=list.map((fm,i)=>{
+    topSaat+=fm.saat;topUcret+=fm.ucret;
+    return `<div class="tx-row">
+      <div class="tx-icon" style="background:#fff8e1"><i class="ti ti-clock" style="color:#b8860b"></i></div>
+      <div class="tx-info">
+        <div class="tx-name">${fm.tarih}${fm.aciklama?' · '+fm.aciklama:''}</div>
+        <div class="tx-sub">${fm.bas} – ${fm.bit} · ${fm.saat} saat</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="tx-amount" style="color:#b8860b">${fmt(fm.ucret)}</div>
+        ${isAdmin()?`<button onclick="silFM(${i})" style="background:#fdecea;border:none;border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><i class="ti ti-trash" style="color:#c0392b;font-size:14px"></i></button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  if(ozet){
+    ozet.style.display='block';
+    document.getElementById('fm-top-saat').textContent=topSaat+' saat';
+    document.getElementById('fm-top-ucret').textContent=fmt(topUcret);
+  }
+}
+
+window.fmEkle=()=>{
+  if(!isAdmin())return showToast('Yalnızca yönetici veri girebilir.');
+  document.getElementById('fm-tarih').value=today();
+  document.getElementById('fm-bas').value='18:00';
+  document.getElementById('fm-bit').value='21:00';
+  document.getElementById('fm-aciklama').value='';
+  openModal('modal-fm');
+};
+
+window.kaydetFM=async()=>{
+  const tarih=document.getElementById('fm-tarih').value;
+  const bas=document.getElementById('fm-bas').value;
+  const bit=document.getElementById('fm-bit').value;
+  const saatUcret=parseFloat(document.getElementById('fm-saat-ucret').value)||100;
+  const aciklama=document.getElementById('fm-aciklama').value.trim();
+  if(!tarih||!bas||!bit){return showToast('Tarih ve saat alanlarını doldurun.');}
+  const [bH,bM]=bas.split(':').map(Number);
+  const [eH,eM]=bit.split(':').map(Number);
+  let saat=((eH*60+eM)-(bH*60+bM))/60;
+  if(saat<=0){return showToast('Bitiş saati başlangıçtan sonra olmalı.');}
+  saat=Math.round(saat*10)/10;
+  const ucret=Math.round(saat*saatUcret*100)/100;
+  const tarihFmt=tarih.split('-').reverse().join('.');
+  const fm={tarih:tarihFmt,bas,bit,saat,ucret,aciklama};
+  const ay=state.puantajAy;
+  if(!state.fazlaMesai[ay])state.fazlaMesai[ay]=[];
+  state.fazlaMesai[ay].push(fm);
+  try{await setDoc(doc(db,'fazlamesai','2026'),state.fazlaMesai);}catch(e){}
+  closeModal('modal-fm');
+  renderFazlaMesai();
+  showToast(`✓ ${saat} saat mesai kaydedildi (${fmt(ucret)})`);
+};
+
+window.silFM=async(index)=>{
+  if(!confirm('Bu fazla mesai kaydı silinsin mi?'))return;
+  const ay=state.puantajAy;
+  state.fazlaMesai[ay].splice(index,1);
+  try{await setDoc(doc(db,'fazlamesai','2026'),state.fazlaMesai);}catch(e){}
+  renderFazlaMesai();
+  showToast('Silindi');
+};
+
+// =====================================================
+// EXCEL İNDİR — MALİ MÜŞAVİR RAPORU
+// =====================================================
+window.indirPersonelExcel=()=>{
+  const ay=state.puantajAy;
+  const yil=state.puantajYil;
+  const p=personelOzluk;
+  const gun=state.puantaj[ay]||{};
+  const gunSayisi=new Date(yil,AYLAR.indexOf(ay)+1,0).getDate();
+  const stat=getPuantajStat(ay);
+  const fmList=getFMListesi();
+  const topFMSaat=fmList.reduce((a,b)=>a+b.saat,0);
+  const topFMUcret=fmList.reduce((a,b)=>a+b.ucret,0);
+  const maas=parseFloat(p.maas)||0;
+  const maasbrut=parseFloat(p.maasbrut)||0;
+
+  // Puantaj satırları
+  let puantajRows='';
+  for(let g=1;g<=gunSayisi;g++){
+    const kod=gun[g]||'';
+    const label=kod&&PUANTAJ_KODLAR[kod]?PUANTAJ_KODLAR[kod].label:'—';
+    const bgColor=kod==='X'?'#e4f5ec':kod==='P'?'#e3f0ff':kod&&kod!=='-'?'#fde8e8':'#fff';
+    puantajRows+=`<tr><td style="text-align:center;border:1px solid #ddd;padding:4px;font-size:11px">${g}</td><td style="text-align:center;border:1px solid #ddd;padding:4px;font-size:11px;background:${bgColor};font-weight:600">${kod||'—'}</td><td style="border:1px solid #ddd;padding:4px;font-size:11px">${label}</td></tr>`;
+  }
+
+  // Fazla mesai satırları
+  let fmRows='';
+  if(fmList.length){
+    fmList.forEach(fm=>{
+      fmRows+=`<tr><td style="border:1px solid #ddd;padding:4px;font-size:11px">${fm.tarih}</td><td style="text-align:center;border:1px solid #ddd;padding:4px;font-size:11px">${fm.bas}</td><td style="text-align:center;border:1px solid #ddd;padding:4px;font-size:11px">${fm.bit}</td><td style="text-align:center;border:1px solid #ddd;padding:4px;font-size:11px">${fm.saat}</td><td style="text-align:right;border:1px solid #ddd;padding:4px;font-size:11px;font-weight:600;color:#b8860b">${fm.ucret.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</td><td style="border:1px solid #ddd;padding:4px;font-size:11px">${fm.aciklama||'—'}</td></tr>`;
+    });
+  }else{
+    fmRows='<tr><td colspan="6" style="text-align:center;padding:8px;font-size:11px;color:#aaa">Fazla mesai kaydı bulunmamaktadır.</td></tr>';
+  }
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a}h1{font-size:16px;color:#0d5c3a}h2{font-size:13px;color:#555;margin-top:20px}table{border-collapse:collapse;width:100%}th{background:#0d5c3a;color:#fff;padding:6px;font-size:11px}td{padding:5px}tr:nth-child(even){background:#f9f9f9}.toplam{background:#e8f4ee;font-weight:700}</style>
+  </head><body>
+  <div style="text-align:center;border-bottom:3px solid #0d5c3a;padding-bottom:10px;margin-bottom:16px">
+    <h1>AZRA SAHİL SİTESİ — PERSONEL AYLIK RAPORU</h1>
+    <div style="font-size:13px;color:#555">${ay} ${yil} — Düzenleme: ${new Date().toLocaleDateString('tr-TR')}</div>
+  </div>
+
+  <h2>1. PERSONEL BİLGİLERİ</h2>
+  <table>
+    <tr><td style="width:160px;font-weight:600;border:1px solid #ddd;padding:5px">Ad Soyad</td><td style="border:1px solid #ddd;padding:5px">${p.adsoyad||'—'}</td><td style="width:160px;font-weight:600;border:1px solid #ddd;padding:5px">Unvan</td><td style="border:1px solid #ddd;padding:5px">${p.unvan||'—'}</td></tr>
+    <tr><td style="font-weight:600;border:1px solid #ddd;padding:5px">TC Kimlik No</td><td style="border:1px solid #ddd;padding:5px">${p.tc||'—'}</td><td style="font-weight:600;border:1px solid #ddd;padding:5px">SGK Sicil</td><td style="border:1px solid #ddd;padding:5px">${p.sgk||'—'}</td></tr>
+    <tr><td style="font-weight:600;border:1px solid #ddd;padding:5px">İşe Giriş</td><td style="border:1px solid #ddd;padding:5px">${p.giris||'—'}</td><td style="font-weight:600;border:1px solid #ddd;padding:5px">Sigorta Türü</td><td style="border:1px solid #ddd;padding:5px">${p.sigorta||'—'}</td></tr>
+    <tr><td style="font-weight:600;border:1px solid #ddd;padding:5px">Net Maaş</td><td style="border:1px solid #ddd;padding:5px">${maas?maas.toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺':'—'}</td><td style="font-weight:600;border:1px solid #ddd;padding:5px">Brüt Maaş</td><td style="border:1px solid #ddd;padding:5px">${maasbrut?maasbrut.toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺':'—'}</td></tr>
+    <tr><td style="font-weight:600;border:1px solid #ddd;padding:5px">Banka</td><td style="border:1px solid #ddd;padding:5px">${p.banka||'—'}</td><td style="font-weight:600;border:1px solid #ddd;padding:5px">IBAN</td><td style="border:1px solid #ddd;padding:5px">${p.iban||'—'}</td></tr>
+  </table>
+
+  <h2>2. PUANTAJ ÇİZELGESİ — ${ay} ${yil}</h2>
+  <table>
+    <thead><tr><th style="width:40px">Gün</th><th style="width:50px">Kod</th><th>Açıklama</th></tr></thead>
+    <tbody>${puantajRows}</tbody>
+    <tfoot>
+      <tr class="toplam"><td colspan="3" style="border:1px solid #ddd;padding:6px">
+        Çalışma: <b>${stat.calisma}</b> gün &nbsp;|&nbsp;
+        Pazar: <b>${stat.pazar}</b> &nbsp;|&nbsp;
+        Res.Tatil: <b>${stat.rt}</b> &nbsp;|&nbsp;
+        Yıl.İzin: <b>${stat.yi}</b> &nbsp;|&nbsp;
+        İzin: <b>${stat.iz}</b> &nbsp;|&nbsp;
+        Rapor: <b>${stat.rp}</b>
+      </td></tr>
+    </tfoot>
+  </table>
+
+  <h2>3. FAZLA MESAİ — ${ay} ${yil}</h2>
+  <table>
+    <thead><tr><th>Tarih</th><th>Başlangıç</th><th>Bitiş</th><th>Saat</th><th>Ücret</th><th>Açıklama</th></tr></thead>
+    <tbody>${fmRows}</tbody>
+    <tfoot>
+      <tr class="toplam">
+        <td colspan="3" style="border:1px solid #ddd;padding:6px;font-weight:700">TOPLAM</td>
+        <td style="border:1px solid #ddd;padding:6px;text-align:center;font-weight:700">${topFMSaat} saat</td>
+        <td style="border:1px solid #ddd;padding:6px;text-align:right;font-weight:700;color:#b8860b">${topFMUcret.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</td>
+        <td style="border:1px solid #ddd"></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <h2>4. ÜCRET ÖZETİ</h2>
+  <table>
+    <tr><td style="font-weight:600;border:1px solid #ddd;padding:6px">Net Aylık Maaş</td><td style="text-align:right;border:1px solid #ddd;padding:6px">${maas?maas.toLocaleString('tr-TR',{minimumFractionDigits:2})+' ₺':'—'}</td></tr>
+    <tr><td style="font-weight:600;border:1px solid #ddd;padding:6px">Fazla Mesai Ücreti</td><td style="text-align:right;border:1px solid #ddd;padding:6px">${topFMUcret.toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</td></tr>
+    <tr class="toplam"><td style="border:1px solid #ddd;padding:8px;font-size:13px">TOPLAM ÖDENECEK</td><td style="text-align:right;border:1px solid #ddd;padding:8px;font-size:14px;color:#0d5c3a">${(maas+topFMUcret).toLocaleString('tr-TR',{minimumFractionDigits:2})} ₺</td></tr>
+  </table>
+
+  <div style="margin-top:30px;display:flex;justify-content:space-between;padding-top:20px;border-top:1px solid #ddd">
+    <div style="text-align:center;width:45%"><div style="margin-bottom:40px">İmza</div><div style="border-top:1px solid #555;padding-top:6px;font-size:11px">Personel: ${p.adsoyad||'............'}</div></div>
+    <div style="text-align:center;width:45%"><div style="margin-bottom:40px">İmza / Mühür</div><div style="border-top:1px solid #555;padding-top:6px;font-size:11px">Yönetici: Ferhat Özdal</div></div>
+  </div>
+  <div style="text-align:center;font-size:10px;color:#aaa;margin-top:20px">Bu belge Azra Sahil Sitesi Yönetim Sistemi tarafından ${new Date().toLocaleString('tr-TR')} tarihinde oluşturulmuştur.</div>
+  </body></html>`;
+
+  const blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`personel-raporu-${ay}-${yil}.xls`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`✓ ${ay} ${yil} personel raporu indirildi`);
+};
 
 // RAPOR
 let raporAy=BUGUN_AY;
@@ -905,6 +1236,48 @@ function renderRapor(){
   document.getElementById('rapor-ay-detay').innerHTML=ah;
 }
 
+// =====================================================
+// BORÇLU DAİRELERE WHATSAPP HATIRLATMA
+// =====================================================
+window.borcluWaSablon=()=>{
+  const borcluDaireler=DAIRELER.filter(d=>getDaireBakiyeBorc(d.no)>0);
+  if(!borcluDaireler.length){showToast('Borçlu daire yok!');return;}
+  openModal('modal-wa-sablon');
+  const el=document.getElementById('wa-sablon-liste');
+  el.innerHTML=borcluDaireler.map(d=>{
+    const dd=getDaire(d.no);
+    const borc=getDaireBakiyeBorc(d.no);
+    const tel=(dd.sakintl||dd.maliktl||'').replace(/\s/g,'');
+    const wa='90'+tel.replace(/^0/,'');
+    const mesaj=encodeURIComponent(
+      `Sayın ${dd.sakin||dd.malik||'Daire Sakini'},
+
+`+
+      `Azra Sahil Sitesi yönetimi olarak bilgilerinize sunarız.
+
+`+
+      `🏢 Daire No: ${d.no}
+`+
+      `💰 Bakiye Borç: ${fmt(borc)}
+
+`+
+      `Ödemenizi en kısa sürede yapmanızı rica ederiz.
+
+`+
+      `Saygılarımızla,
+Azra Sahil Sitesi Yönetimi`
+    );
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f4f1">
+      <div style="width:36px;height:36px;border-radius:8px;background:#fdecea;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#c0392b;flex-shrink:0">${d.no}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${dd.sakin||dd.malik||'—'}</div>
+        <div style="font-size:12px;color:#888">${fmt(borc)} · ${tel||'Tel yok'}</div>
+      </div>
+      ${tel?`<a href="https://wa.me/${wa}?text=${mesaj}" target="_blank" class="btn wa" style="padding:6px 10px;font-size:12px;width:auto;flex-shrink:0"><i class="ti ti-brand-whatsapp"></i></a>`:'<span style="font-size:11px;color:#aaa">Tel yok</span>'}
+    </div>`;
+  }).join('');
+};
+
 window.raporPaylas=()=>{
   const topGelir=state.gelirler.filter(g=>g.donem===raporAy).reduce((a,b)=>a+b.tutar,0);
   const topGider=state.giderler.filter(g=>g.donem===raporAy).reduce((a,b)=>a+b.tutar,0);
@@ -923,9 +1296,63 @@ window.raporPaylas=()=>{
 };
 window.raporYayinla=()=>showToast('Siteye yayınlama yakında gelecek!');
 
+window.yilSonuRaporu=()=>{
+  const tumGelirler=state.gelirler.reduce((a,b)=>a+b.tutar,0);
+  const tumGiderler=state.giderler.reduce((a,b)=>a+b.tutar,0);
+  const sabitGelir=state.kasaOnceki.reduce((a,b)=>a+b.gelir,0);
+  const sabitGider=state.kasaOnceki.reduce((a,b)=>a+b.gider,0);
+  const topGelir=sabitGelir+tumGelirler;
+  const topGider=sabitGider+tumGiderler;
+  const kasaBakiye=getKasaBakiye();
+  const borcluSayisi=DAIRELER.filter(d=>getDaireBakiyeBorc(d.no)>0).length;
+  const toplamBorc=getTotalBorc();
+  const odeyenSayisi=58-borcluSayisi;
+  const html=`<div style="font-family:Arial,sans-serif;padding:24px;max-width:520px;background:#fff">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="background:#0d5c3a;color:#fff;padding:16px;border-radius:10px">
+        <div style="font-size:20px;font-weight:800">AZRA SAHİL SİTESİ</div>
+        <div style="font-size:14px;opacity:0.85;margin-top:4px">2026 YILI KAPANIŞ RAPORU</div>
+        <div style="font-size:12px;opacity:0.7;margin-top:2px">${new Date().toLocaleDateString('tr-TR')} tarihi itibarıyla</div>
+      </div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+      <tr style="background:#f5f5f5"><td colspan="2" style="padding:8px 12px;font-size:12px;font-weight:700;color:#0d5c3a;text-transform:uppercase">GELİR ÖZETİ</td></tr>
+      <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:8px 12px;font-size:13px">Ocak-Mayıs Toplam Gelir</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#0d5c3a">${fmt(sabitGelir)}</td></tr>
+      <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:8px 12px;font-size:13px">Haziran Toplam Gelir</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#0d5c3a">${fmt(tumGelirler)}</td></tr>
+      <tr style="background:#e8f4ee"><td style="padding:10px 12px;font-size:14px;font-weight:700">TOPLAM GELİR</td><td style="padding:10px 12px;text-align:right;font-size:16px;font-weight:800;color:#0d5c3a">${fmt(topGelir)}</td></tr>
+      <tr style="background:#f5f5f5"><td colspan="2" style="padding:8px 12px;font-size:12px;font-weight:700;color:#c0392b;text-transform:uppercase;margin-top:8px">GİDER ÖZETİ</td></tr>
+      <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:8px 12px;font-size:13px">Ocak-Mayıs Toplam Gider</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#c0392b">${fmt(sabitGider)}</td></tr>
+      <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:8px 12px;font-size:13px">Haziran Toplam Gider</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#c0392b">${fmt(tumGiderler)}</td></tr>
+      <tr style="background:#fdecea"><td style="padding:10px 12px;font-size:14px;font-weight:700">TOPLAM GİDER</td><td style="padding:10px 12px;text-align:right;font-size:16px;font-weight:800;color:#c0392b">${fmt(topGider)}</td></tr>
+      <tr style="background:#e0f7fa"><td style="padding:12px;font-size:15px;font-weight:800">GÜNCEL KASA BAKİYESİ</td><td style="padding:12px;text-align:right;font-size:20px;font-weight:800;color:#00796b">${fmt(kasaBakiye)}</td></tr>
+    </table>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+      <tr style="background:#f5f5f5"><td colspan="2" style="padding:8px 12px;font-size:12px;font-weight:700;color:#666;text-transform:uppercase">DAİRE DURUMU</td></tr>
+      <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:8px 12px;font-size:13px">Toplam Daire</td><td style="padding:8px 12px;text-align:right;font-weight:700">58</td></tr>
+      <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:8px 12px;font-size:13px">Ödeyen Daire</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#0d5c3a">${odeyenSayisi}</td></tr>
+      <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:8px 12px;font-size:13px">Borçlu Daire</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#c0392b">${borcluSayisi}</td></tr>
+      <tr style="background:#fdecea"><td style="padding:10px 12px;font-size:14px;font-weight:700">TOPLAM BAKİYE BORÇ</td><td style="padding:10px 12px;text-align:right;font-size:16px;font-weight:800;color:#c0392b">${fmt(toplamBorc)}</td></tr>
+    </table>
+    <div style="text-align:center;background:#0d5c3a;color:#fff;padding:10px;border-radius:8px;font-size:12px">
+      Azra Sahil Sitesi Yönetimi · 2026
+    </div>
+  </div>`;
+  const blob=new Blob(['<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Yıl Sonu Raporu</title></head><body>'+html+'</body></html>'],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='azra-2026-yilsonu-raporu.html';a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ Yıl sonu raporu indirildi');
+};
+
 // NAVİGASYON
 let activeTab='home',activeSubTab='gelirler';
 window.switchTab=tab=>{
+  // İzleyici koruma: sadece home ve daireler
+  if(!isAdmin()&&tab!=='home'&&tab!=='daireler'){
+    showToast('Bu sayfa yalnızca yöneticiye açıktır.');
+    return;
+  }
   activeTab=tab;
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -1003,11 +1430,13 @@ window.kaydetEkBorc=async()=>{
   if(!tumDaireler&&!seciliDaireler.length)return showToast('Daire seçin veya Tüm Daireler seçeneğini işaretleyin.');
   const yeniBorclar=[];
   aylar.forEach(ay=>{
+    // Temmuz ve sonrası dinamik borçlandırma
+    const dinamik=AYLAR.indexOf(ay)>=6;
     if(tumDaireler){
-      yeniBorclar.push({id:'eb'+Date.now()+Math.random(),aciklama,tutar,ay,tumDaireler:true,daireNo:null});
+      yeniBorclar.push({id:'eb'+Date.now()+Math.random(),aciklama,tutar,ay,tumDaireler:true,daireNo:null,dinamik});
     } else {
       seciliDaireler.forEach(no=>{
-        yeniBorclar.push({id:'eb'+Date.now()+Math.random(),aciklama,tutar,ay,tumDaireler:false,daireNo:no});
+        yeniBorclar.push({id:'eb'+Date.now()+Math.random(),aciklama,tutar,ay,tumDaireler:false,daireNo:no,dinamik});
       });
     }
   });
@@ -1091,6 +1520,25 @@ window.closeModal=id=>document.getElementById(id)?.classList.remove('open');
 document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 
+// Tarihten dönem (ay) belirle
+function tarihtenDonem(tarihStr){
+  if(!tarihStr)return BUGUN_AY;
+  // YYYY-MM-DD veya DD.MM.YYYY formatını destekle
+  let ay;
+  if(tarihStr.includes('-')){ay=new Date(tarihStr).getMonth();}
+  else if(tarihStr.includes('.')){const p=tarihStr.split('.');ay=parseInt(p[1])-1;}
+  else return BUGUN_AY;
+  return AYLAR[ay]||BUGUN_AY;
+}
+
+// Gider tarih input değişince dönem göster
+window.gidTarihtenDonemBelirle=()=>{
+  const tarih=document.getElementById('gid-tarih').value;
+  const donem=tarihtenDonem(tarih);
+  const lbl=document.getElementById('gid-donem-goster');
+  if(lbl){lbl.textContent='📅 Dönem: '+donem;lbl.style.display=tarih?'block':'none';}
+};
+
 function initDaireSelect(){
   const sel=document.getElementById('g-daire');sel.innerHTML='<option value="">Seçiniz...</option>';
   DAIRELER.forEach(d=>{const dd=getDaire(d.no);const o=document.createElement('option');o.value=d.no;o.textContent=`${d.no} — ${dd.sakin||dd.malik||'Daire '+d.no}`;sel.appendChild(o);});
@@ -1099,7 +1547,9 @@ function setDefaultDates(){
   const t=today();
   ['g-tarih','gid-tarih','tg-tarih'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=t;});
   const ay=new Date().getMonth();
-  ['g-donem','gid-donem'].forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=ay;});
+  ['g-donem'].forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=ay;});
+  // Gider dönem göstergesini güncelle
+  window.gidTarihtenDonemBelirle&&window.gidTarihtenDonemBelirle();
 }
 
 // TOPLU GELİR MODAL AÇ
